@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Biblioteka{% endblock %}</title>
+    <style>
+        /* CSS from the previous artifact goes here */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f6f7;
+            --text-color: #2c3e50;
+            --nav-background: #ffffff;
+            --hover-color: #2980b9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: var(--nav-background);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        nav ul li {
+            margin: 0 1rem;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Content Area */
+        div > div {
+            flex: 1;
+            max-width: 1200px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background-color: var(--secondary-color);
+        }
+
+        .alert-error, .alert-danger {
+            background-color: #e74c3c;
+        }
+
+        .alert-warning {
+            background-color: #f39c12;
+        }
+
+        .alert-info {
+            background-color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul li {
+                margin: 0.5rem 0;
+            }
+        }
+
+        /* Accessibility and Focus */
+        a:focus, button:focus {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            {% if request.user.is_authenticated and not request.user.is_employee %}
+                <li><a href="{% url 'list_books' %}">Książki</a></li>
+                <li><a href="{% url 'dashboard_client' user.id %}">Dashboard</a></li>
+                <li><a href="{% url 'logout' %}">Wyloguj</a></li>
+            {% elif request.user.is_authenticated and request.user.is_employee %}
+                <li><a href="{% url 'list_books' %}">Książki</a></li>
+                <li><a href="{% url 'dashboard_employee' user.id %}">Dashboard pracownika</a></li>
+                <li><a href="{% url 'add_book' %}">Dodaj książkę</a></li>
+                <li><a href="{% url 'list_borrows' %}">Wypożyczenia</a></li>
+                <li><a href="{% url 'list_users' %}">Użytkownicy</a></li>
+                <li><a href="{% url 'logout' %}">Wyloguj</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

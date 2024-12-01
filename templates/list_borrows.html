@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Szczegóły wypożyczeń{% endblock %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .rental-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .rental-title {
+        text-align: center; 
+        color: var(--primary-color); 
+        margin-bottom: 2rem;
+    }
+
+    .rental-list {
+        list-style-type: none;
+    }
+
+    .rental-item {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .rental-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .rental-item li {
+        background-color: var(--background-color);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+    }
+
+    .rental-empty-state {
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
+        padding: 1rem;
+        background-color: var(--card-background);
+        border-radius: 4px;
+        margin: 2rem 0;
+    }
+
+    .rental-status-active {
+        color: var(--secondary-color);
+        font-weight: bold;
+    }
+
+    .rental-status-late {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+
+    @media screen and (max-width: 768px) {
+        .rental-container {
+            padding: 0.5rem;
+        }
+    }
+</style>
+<div class="rental-container">
+    <h1 class="rental-title">Lista wypożyczeń</h1>
+    {% if object_list %}
+    <ul class="rental-list">
+        {% for borrow in object_list %}
+        <div class="rental-item">
+            <li>
+                <strong>Identyfikator wypożyczenia:</strong> {{ borrow.id }} <br>
+                <strong>Użytkownik:</strong> {{ borrow.user.email }} <br>
+                <strong>Tytuł książki:</strong> {{ borrow.book_copy.book.title }} <br>
+                <strong>Data wypożyczenia:</strong> {{ borrow.rental_date|date:"d-m-Y" }} <br>
+                <strong>Planowana data zwrotu:</strong> {{ borrow.due_date|date:"d-m-Y" }} <br>
+                <strong>Data zwrotu:</strong> {% if borrow.return_date %}{{ borrow.return_date|date:"d-m-Y" }}{% else %}Brak{% endif %} <br>
+                <strong>Czy przedłużono:</strong> {{ borrow.is_extended|yesno:"Tak,Nie" }} <br>
+                <strong>Status wypożyczenia:</strong> 
+                <span class="{% if borrow.get_status_display == 'Aktywne' %}rental-status-active{% else %}rental-status-late{% endif %}">
+                    {{ borrow.get_status_display }}
+                </span> <br>
+                <strong>Wysokość kary:</strong> 
+                {% if borrow.fine %}
+                    <span class="rental-status-late">{{ borrow.fine }} PLN</span>
+                {% else %}
+                    Brak kary
+                {% endif %}
+            </li>
+        </div>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="rental-empty-state">Brak wypożyczeń do wyświetlenia.</p>
+{% endif %}
+
+</div>
+{% endblock %}

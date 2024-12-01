@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Szczegóły użytkownika{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .user-details-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .user-details-section {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .user-details-section:hover {
+        transform: translateY(-5px);
+    }
+
+    .user-details-section h1 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .user-details-list {
+        list-style-type: none;
+    }
+
+    .user-details-list li {
+        background-color: var(--background-color);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+    }
+
+    .user-details-form-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        justify-content: center;
+    }
+
+    .user-details-form-buttons form {
+        margin: 0 0.25rem;
+    }
+
+    .user-details-form-buttons button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .user-details-form-buttons button:hover {
+        background-color: var(--hover-color);
+    }
+
+    .user-details-back {
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .user-details-back:hover {
+        text-decoration: underline;
+    }
+
+    .user-status-active {
+        color: var(--secondary-color);
+        font-weight: bold;
+    }
+
+    .user-status-inactive {
+        color: #e74c3c;
+        font-weight: bold;
+    }
+</style>
+
+<div class="user-details-container">
+    <div class="user-details-section">
+        <h1>Szczegóły użytkownika</h1>
+        
+        <ul class="user-details-list">
+            <li>
+                <strong>ID:</strong> {{ object.id }}<br>
+                <strong>Imię:</strong> {{ object.first_name }}<br>
+                <strong>Nazwisko:</strong> {{ object.last_name }}<br>
+                <strong>Email:</strong> {{ object.email }}<br>
+                <strong>Data dołączenia:</strong> {{ object.date_joined|date:"d-m-Y H:i" }}<br>
+                <strong>Status:</strong> 
+                {% if object.is_active %}
+                    <span class="user-status-active">Aktywny</span>
+                {% else %}
+                    <span class="user-status-inactive">Nieaktywny</span>
+                {% endif %}
+            </li>
+        </ul>
+
+        {% if request.user.is_admin %}
+        <div class="user-details-form-buttons">
+            <form method="get" action="{% url 'edit_user' pk=object.id %}">
+                {% csrf_token %}
+                <button type="submit">Edytuj użytkownika</button>
+            </form>
+            <form method="get" action="{% url 'delete_user' pk=object.id %}">
+                {% csrf_token %}
+                <button type="submit">Usuń użytkownika</button>
+            </form>
+            <form method="post" action="{% url 'active_user' pk=object.id %}">
+                {% csrf_token %}
+                <button type="submit">
+                    {% if object.is_active %}
+                        Dezaktywuj konto użytkownika
+                    {% else %}
+                        Aktywuj konto użytkownika
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'list_users' %}" class="user-details-back">Powrót do listy użytkowników</a>
+</div>
+{% endblock %}

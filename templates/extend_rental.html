@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Przedłużenie wypożyczenia{% endblock %}
+
+{% block content %}
+<h1>Przedłużenie wypożyczenia</h1>
+
+<p>Chcesz przedłużyć wypożyczenie książki <strong>{{ rental.book_copy.book.title }}</strong>?</p>
+<ul>
+    <li><strong>Status:</strong> {{ rental.status }}</li>
+    <li><strong>Data wypożyczenia:</strong> {{ rental.rental_date }}</li>
+    <li><strong>Termin zwrotu:</strong> {{ rental.due_date }}</li>
+</ul>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Potwierdź przedłużenie</button>
+    <a href="{% url 'dashboard_client' request.user.id %}" class="btn btn-secondary">Cofnij</a>
+</form>
+{% endblock %}

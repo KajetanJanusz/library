@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Klienta{% endblock %}
+
+{% block content %}
+
+<title>Panel Klienta - Biblioteka</title>
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+
+    .dashboard-section {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .dashboard-section:hover {
+        transform: translateY(-5px);
+    }
+
+    .dashboard-section h2 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .dashboard-list {
+        list-style-type: none;
+    }
+
+    .dashboard-list li {
+        background-color: var(--background-color);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+    }
+
+    .dashboard-form-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .dashboard-form-buttons button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .dashboard-form-buttons button:hover {
+        background-color: var(--hover-color);
+    }
+
+    .dashboard-empty-state {
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
+        padding: 1rem;
+        background-color: var(--background-color);
+        border-radius: 4px;
+    }
+
+    .rental-status-rented {
+        color: var(--secondary-color);
+        font-weight: bold;
+    }
+
+    .opinion-rating {
+        color: #f39c12;
+        font-weight: bold;
+    }
+
+    @media screen and (max-width: 1200px) {
+        .dashboard-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="dashboard-container">
+    <h1 style="text-align: center; color: var(--primary-color); margin-bottom: 2rem;">Witaj, {{ user.username }}!</h1>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-section">
+            <h2>Twoje dane</h2>
+            <div class="dashboard-list">
+                <li>
+                    <strong>Imię:</strong> {{ user.first_name }}<br>
+                    <strong>Nazwisko:</strong> {{ user.last_name }}<br>
+                    <strong>E-mail:</strong> {{ user.email }}<br>
+                    <strong>Telefon:</strong> {{ user.phone|default:"Brak" }}
+                </li>
+            </div>
+            {% if user == request.user %}
+            <div class="dashboard-form-buttons">
+                <form method="get" action="{% url 'edit_user' pk=request.user.id %}">
+                    <button type="submit">Edytuj profil</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Powiadomienia</h2>
+            {% if notifications %}
+            <ul class="dashboard-list">
+                {% for notification in notifications %}
+                <li>{{ notification.message }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="dashboard-empty-state">Brak powiadomień</p>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Twoje Aktualne Wypożyczenia</h2>
+            {% if rented_books %}
+            <ul class="dashboard-list">
+                {% for rental in rented_books %}
+                <li>
+                    <strong>Książka:</strong> {{ rental.book_copy.book.title }}<br>
+                    <strong>Status:</strong> <span class="rental-status-rented">{{ rental.status }}</span><br>
+                    <strong>Data wypożyczenia:</strong> {{ rental.rental_date }}<br>
+                    <strong>Termin zwrotu:</strong> {{ rental.due_date }}<br>
+                    <div class="dashboard-form-buttons">
+                        {% if rental.status == 'rented' %}
+                        <form action="{% url 'return_book' pk=rental.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">Zwrot</button>
+                        </form>
+                        {% endif %}
+                        {% if not rental.is_extended %}
+                        <form action="{% url 'extend_book' pk=rental.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">Przedłużenie</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="dashboard-empty-state">Brak aktualnych wypożyczeń</p>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Twoje Opinie</h2>
+            {% if opinions %}
+            <ul class="dashboard-list">
+                {% for opinion in opinions %}
+                <li>
+                    <strong>Książka:</strong> {{ opinion.book.title }}<br>
+                    <strong>Ocena:</strong> <span class="opinion-rating">{{ opinion.rate }}/5</span><br>
+                    <strong>Komentarz:</strong> {{ opinion.comment }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="dashboard-empty-state">Brak opinii</p>
+            {% endif %}
+        </div>
+
+        {% if recommended_books %}
+        <div class="dashboard-section">
+            <h2>Rekomendacje</h2>
+            <ul class="dashboard-list">
+                {% for book in recommended_books %}
+                <li>{{ book.title }} - Kategoria: {{ book.category.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="dashboard-section">
+            <h2>Historia Wypożyczeń</h2>
+            {% if rented_books_old %}
+            <ul class="dashboard-list">
+                {% for rental in rented_books_old %}
+                <li>
+                    <strong>Książka:</strong> {{ rental.book_copy.book.title }}<br>
+                    <strong>Data wypożyczenia:</strong> {{ rental.rental_date }}<br>
+                    <strong>Termin zwrotu:</strong> {{ rental.due_date }}<br>
+                    {% if rental.return_date %}
+                    <strong>Data zwrotu:</strong> {{ rental.return_date }}<br>
+                    {% else %}
+                    <strong>Data zwrotu:</strong> Brak<br>
+                    {% endif %}
+                    {% if rental.fine %}
+                    <strong>Kara:</strong> {{ rental.fine }}<br>
+                    {% else %}
+                    <strong>Kara:</strong> Brak<br>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="dashboard-empty-state">Brak starych wypożyczeń</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+
+
+{% endblock %}

@@ -1,0 +1,9 @@
+services:
+  app:
+    image: library:prod
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app

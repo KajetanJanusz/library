@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moje Wypożyczenia</title>
+</head>
+<body>
+    <h1>Moje Wypożyczenia</h1>
+    
+    {% if object_list %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Książka</th>
+                    <th>Data wypożyczenia</th>
+                    <th>Status</th>
+                    <th>Data zwrotu</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rental in object_list %}
+                    <tr>
+                        <td>{{ rental.book_copy.book.title }}</td>
+                        <td>{{ rental.rental_date }}</td>
+                        <td>{{ rental.status }}</td>
+                        <td>
+                            {% if rental.return_date %}
+                                {{ rental.return_date }}
+                            {% else %}
+                                Brak daty zwrotu
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nie masz żadnych wypożyczeń.</p>
+    {% endif %}
+    
+    <a href="{% url 'list_books' %}">Wróć do listy książek</a>
+</body>
+</html>

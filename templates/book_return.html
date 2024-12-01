@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Zwrot książki</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="rental">Wybierz wypożyczoną książkę:</label>
+    <select name="rental" id="rental">
+        {% for rental in rentals %}
+            <option value="{{ rental.id }}">{{ rental.book_copy.book.title }} - Wypożyczono: {{ rental.rental_date }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Zwróć książkę</button>
+</form>
+{% endblock %}

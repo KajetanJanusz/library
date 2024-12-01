@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .login-container {
+        max-width: 500px;
+        margin: 5rem auto;
+        padding: 2rem;
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .login-header h2 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        background-color: #f9f9f9;
+    }
+
+    .form-group input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    .form-group small {
+        color: #f39c12;
+    }
+
+    .login-button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        width: 100%;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .login-button:hover {
+        background-color: var(--hover-color);
+    }
+
+    .login-footer {
+        text-align: center;
+        margin-top: 2rem;
+        color: rgba(0, 0, 0, 0.7);
+    }
+
+    .login-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+<div class="login-container">
+    <div class="login-header">
+        <h2>Dodaj książkę</h2>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_title">Tytuł książki</label>
+            {{ form.title }}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_author">Autor</label>
+            {{ form.author }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_category">Kategoria</label>
+            {{ form.category }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_published_date">Data publikacji</label>
+            {{ form.published_date }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_isbn">ISBN</label>
+            {{ form.isbn }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_total_copies">Łączna liczba kopii</label>
+            {{ form.total_copies }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_description">Opis</label>
+            {{ form.description }}
+        </div>
+
+        <button type="submit" class="login-button">Dodaj książkę</button>
+    </form>
+
+</div>
+{% endblock %}

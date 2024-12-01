@@ -1,0 +1,722 @@
+[
+    {
+        "model": "users.customuser",
+        "pk": 1,
+        "fields": {
+            "username": "admin",
+            "email": "admin@library.com",
+            "password": "admin123",
+            "is_staff": true,
+            "is_superuser": true,
+            "is_employee": true,
+            "is_admin": true,
+            "phone": "+48123456789",
+            "first_name": "Library",
+            "last_name": "Admin"
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 2,
+        "fields": {
+            "username": "john_doe",
+            "email": "john.doe@example.com",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_employee": false,
+            "is_admin": false,
+            "phone": "+48987654321",
+            "first_name": "John",
+            "last_name": "Doe"
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 3,
+        "fields": {
+            "username": "jane_smith",
+            "email": "jane.smith@example.com",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_employee": false,
+            "is_admin": false,
+            "phone": "+48567890123",
+            "first_name": "Jane",
+            "last_name": "Smith"
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 4,
+        "fields": {
+            "username": "alice_jones",
+            "email": "alice.jones@example.com",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_employee": false,
+            "is_admin": false,
+            "phone": "+48123456790",
+            "first_name": "Alice",
+            "last_name": "Jones"
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 5,
+        "fields": {
+            "username": "bob_brown",
+            "email": "bob.brown@example.com",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_employee": false,
+            "is_admin": false,
+            "phone": "+48987654322",
+            "first_name": "Bob",
+            "last_name": "Brown"
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 6,
+        "fields": {
+            "username": "jan_nowak",
+            "email": "jan.nowak@example.com",
+            "is_staff": false,
+            "is_superuser": false,
+            "is_employee": false,
+            "is_admin": false,
+            "phone": "+48987554322",
+            "first_name": "Jan",
+            "last_name": "Nowak"
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 7,
+        "fields": {
+            "password": "pbkdf2_sha256$870000$FDniLDcuH4tH9IucB3INsB$bf3mrgUcuefuviARRftdpYat+DiyILJnfULG0dED5lo=",
+            "last_login": "2024-12-01T20:56:58Z",
+            "is_superuser": true,
+            "username": "Admin",
+            "first_name": "",
+            "last_name": "",
+            "email": "admin@wp.pl",
+            "is_staff": true,
+            "date_joined": "2024-12-01T20:56:48Z",
+            "phone": null,
+            "is_employee": true,
+            "is_admin": true,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 8,
+        "fields": {
+            "password": "pbkdf2_sha256$870000$srq6wNsSRpCVjOqEaCRPzh$cGEW+FsTF6Xu2PTz7+CCNh4OdLtoli7MNfQgjEplQEA=",
+            "last_login": "2024-12-01T21:07:04.879Z",
+            "is_superuser": false,
+            "username": "TestUser",
+            "first_name": "Test",
+            "last_name": "User",
+            "email": "test@wp.pl",
+            "is_staff": false,
+            "date_joined": "2024-12-01T21:07:04.450Z",
+            "phone": "667990332",
+            "is_employee": false,
+            "is_admin": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.customuser",
+        "pk": 9,
+        "fields": {
+            "password": "pbkdf2_sha256$870000$P8ohm4kYdj3rCafLR52u7A$xY7LpxtzaS8c6N+7zJpL4VaBM105omsmmw9kKrPq8UI=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "TestBibliotekarz",
+            "first_name": "Test",
+            "last_name": "Bibliotekarz",
+            "email": "bibliotekarz@wp.pl",
+            "is_staff": false,
+            "date_joined": "2024-12-01T21:13:24.575Z",
+            "phone": "679337221",
+            "is_employee": true,
+            "is_admin": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "books.category",
+        "pk": 1,
+        "fields": {
+            "name": "Science Fiction",
+            "description": "Imaginative and futuristic fiction based on scientific or technological advances"
+        }
+    },
+    {
+        "model": "books.category",
+        "pk": 2,
+        "fields": {
+            "name": "Fantasy",
+            "description": "Fiction involving magic or supernatural elements"
+        }
+    },
+    {
+        "model": "books.category",
+        "pk": 3,
+        "fields": {
+            "name": "Non-Fiction",
+            "description": "Informative books based on facts and real events"
+        }
+    },
+    {
+        "model": "books.category",
+        "pk": 4,
+        "fields": {
+            "name": "Mystery",
+            "description": "Fiction dealing with the solution of a crime or the unraveling of a puzzle"
+        }
+    },
+    {
+        "model": "books.category",
+        "pk": 5,
+        "fields": {
+            "name": "Biography",
+            "description": "Non-fiction accounts of a person's life"
+        }
+    },
+    {
+        "model": "books.book",
+        "pk": 1,
+        "fields": {
+            "title": "Dune",
+            "author": "Frank Herbert",
+            "category": 1,
+            "published_date": "1965-08-01",
+            "isbn": "9780441172719",
+            "description": "A science fiction novel about a young nobleman's journey on a desert planet",
+            "total_copies": 5
+        }
+    },
+    {
+        "model": "books.book",
+        "pk": 2,
+        "fields": {
+            "title": "The Lord of the Rings",
+            "author": "J.R.R. Tolkien",
+            "category": 2,
+            "published_date": "1954-07-29",
+            "isbn": "9780261102385",
+            "description": "An epic high fantasy novel that follows hobbits on a quest to destroy a powerful ring",
+            "total_copies": 3
+        }
+    },
+    {
+        "model": "books.book",
+        "pk": 3,
+        "fields": {
+            "title": "The Hobbit",
+            "author": "J.R.R. Tolkien",
+            "category": 2,
+            "published_date": "1937-09-21",
+            "isbn": "9780345339683",
+            "description": "The prelude to The Lord of the Rings, detailing Bilbo Baggins' adventure",
+            "total_copies": 1
+        }
+    },
+    {
+        "model": "books.book",
+        "pk": 4,
+        "fields": {
+            "title": "To Kill a Mockingbird",
+            "author": "Harper Lee",
+            "category": 3,
+            "published_date": "1960-07-11",
+            "isbn": "9780061120084",
+            "description": "A novel set in the Deep South, addressing serious issues such as racial injustice.",
+            "total_copies": 2
+        }
+    },
+    {
+        "model": "books.book",
+        "pk": 5,
+        "fields": {
+            "title": "The Great Gatsby",
+            "author": "F. Scott Fitzgerald",
+            "category": 3,
+            "published_date": "1925-04-10",
+            "isbn": "9780743273565",
+            "description": "A novel about the American dream and life in the Jazz Age.",
+            "total_copies": 3
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 1,
+        "fields": {
+            "book": 1,
+            "is_available": false,
+            "borrower": 2
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 2,
+        "fields": {
+            "book": 1,
+            "is_available": true,
+            "borrower": null
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 3,
+        "fields": {
+            "book": 1,
+            "is_available": false,
+            "borrower": 1
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 4,
+        "fields": {
+            "book": 1,
+            "is_available": true,
+            "borrower": null
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 5,
+        "fields": {
+            "book": 1,
+            "is_available": true,
+            "borrower": null
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 6,
+        "fields": {
+            "book": 2,
+            "is_available": false,
+            "borrower": 3
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 7,
+        "fields": {
+            "book": 2,
+            "is_available": true,
+            "borrower": null
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 8,
+        "fields": {
+            "book": 2,
+            "is_available": false,
+            "borrower": 1
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 9,
+        "fields": {
+            "book": 3,
+            "is_available": true,
+            "borrower": null
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 10,
+        "fields": {
+            "book": 4,
+            "is_available": true,
+            "borrower": null
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 11,
+        "fields": {
+            "book": 4,
+            "is_available": false,
+            "borrower": 4
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 12,
+        "fields": {
+            "book": 5,
+            "is_available": false,
+            "borrower": 5
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 13,
+        "fields": {
+            "book": 5,
+            "is_available": true,
+            "borrower": null
+        }
+    },
+    {
+        "model": "books.bookcopy",
+        "pk": 14,
+        "fields": {
+            "book": 5,
+            "is_available": false,
+            "borrower": 2
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 1,
+        "fields": {
+            "book_copy": 1,
+            "user": 2,
+            "rental_date": "2024-02-01",
+            "due_date": "2024-02-28",
+            "return_date": null,
+            "is_extended": false,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 2,
+        "fields": {
+            "book_copy": 3,
+            "user": 1,
+            "rental_date": "2024-01-15",
+            "due_date": "2024-02-14",
+            "return_date": null,
+            "is_extended": false,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 3,
+        "fields": {
+            "book_copy": 6,
+            "user": 3,
+            "rental_date": "2024-01-20",
+            "due_date": "2024-02-19",
+            "return_date": null,
+            "is_extended": true,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 4,
+        "fields": {
+            "book_copy": 8,
+            "user": 1,
+            "rental_date": "2024-02-10",
+            "due_date": "2024-03-10",
+            "return_date": null,
+            "is_extended": false,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 5,
+        "fields": {
+            "book_copy": 11,
+            "user": 4,
+            "rental_date": "2024-01-05",
+            "due_date": "2024-02-04",
+            "return_date": "2024-02-03",
+            "is_extended": false,
+            "status": "returned",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 6,
+        "fields": {
+            "book_copy": 12,
+            "user": 5,
+            "rental_date": "2024-01-12",
+            "due_date": "2024-02-11",
+            "return_date": null,
+            "is_extended": true,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 7,
+        "fields": {
+            "book_copy": 14,
+            "user": 2,
+            "rental_date": "2024-02-01",
+            "due_date": "2024-02-28",
+            "return_date": null,
+            "is_extended": false,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 8,
+        "fields": {
+            "book_copy": 2,
+            "user": 6,
+            "rental_date": "2024-12-01",
+            "due_date": "2024-12-31",
+            "return_date": "2024-12-01",
+            "is_extended": false,
+            "status": "returned",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 9,
+        "fields": {
+            "book_copy": 4,
+            "user": 6,
+            "rental_date": "2024-12-01",
+            "due_date": "2024-12-31",
+            "return_date": "2024-12-01",
+            "is_extended": false,
+            "status": "returned",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 10,
+        "fields": {
+            "book_copy": 9,
+            "user": 6,
+            "rental_date": "2024-12-01",
+            "due_date": "2024-12-31",
+            "return_date": "2024-12-01",
+            "is_extended": false,
+            "status": "returned",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 11,
+        "fields": {
+            "book_copy": 2,
+            "user": 8,
+            "rental_date": "2024-12-01",
+            "due_date": "2025-01-07",
+            "return_date": "2024-12-01",
+            "is_extended": true,
+            "status": "returned",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 12,
+        "fields": {
+            "book_copy": 7,
+            "user": 8,
+            "rental_date": "2024-12-01",
+            "due_date": "2025-01-07",
+            "return_date": null,
+            "is_extended": true,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 13,
+        "fields": {
+            "book_copy": 10,
+            "user": 8,
+            "rental_date": "2024-12-01",
+            "due_date": "2024-12-31",
+            "return_date": "2024-12-01",
+            "is_extended": false,
+            "status": "returned",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 14,
+        "fields": {
+            "book_copy": 13,
+            "user": 8,
+            "rental_date": "2024-12-01",
+            "due_date": "2024-12-31",
+            "return_date": "2024-12-01",
+            "is_extended": false,
+            "status": "returned",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.bookrental",
+        "pk": 15,
+        "fields": {
+            "book_copy": 13,
+            "user": 8,
+            "rental_date": "2024-12-01",
+            "due_date": "2024-12-31",
+            "return_date": null,
+            "is_extended": false,
+            "status": "rented",
+            "fine": null
+        }
+    },
+    {
+        "model": "books.opinion",
+        "pk": 2,
+        "fields": {
+            "book": 2,
+            "user": 3,
+            "rate": 4,
+            "comment": "A thrilling adventure in a fantastical world!",
+            "created_at": "2024-01-25"
+        }
+    },
+    {
+        "model": "books.opinion",
+        "pk": 3,
+        "fields": {
+            "book": 3,
+            "user": 4,
+            "rate": 5,
+            "comment": "Informative and captivating read for history enthusiasts.",
+            "created_at": "2024-02-01"
+        }
+    },
+    {
+        "model": "books.opinion",
+        "pk": 4,
+        "fields": {
+            "book": 4,
+            "user": 5,
+            "rate": 3,
+            "comment": "A decent book, but the pacing felt a bit off.",
+            "created_at": "2024-02-05"
+        }
+    },
+    {
+        "model": "books.opinion",
+        "pk": 5,
+        "fields": {
+            "book": 5,
+            "user": 1,
+            "rate": 4,
+            "comment": "Great concepts, but could use more depth in the story.",
+            "created_at": "2024-02-10"
+        }
+    },
+    {
+        "model": "books.opinion",
+        "pk": 6,
+        "fields": {
+            "book": 1,
+            "user": 3,
+            "rate": 5,
+            "comment": "Still one of the best sci-fi novels I’ve read!",
+            "created_at": "2024-02-12"
+        }
+    },
+    {
+        "model": "books.opinion",
+        "pk": 7,
+        "fields": {
+            "book": 1,
+            "user": 8,
+            "rate": 5,
+            "comment": "Great experience!",
+            "created_at": "2024-12-01"
+        }
+    },
+    {
+        "model": "books.opinion",
+        "pk": 8,
+        "fields": {
+            "book": 2,
+            "user": 8,
+            "rate": 3,
+            "comment": "Mid",
+            "created_at": "2024-12-01"
+        }
+    },
+    {
+        "model": "books.notification",
+        "pk": 1,
+        "fields": {
+            "user": 2,
+            "book": 1,
+            "is_available": true,
+            "message": "Książka Dune jest gotowa do wypożyczenia",
+            "is_read": false,
+            "created_at": "2024-01-15T10:30:00Z"
+        }
+    },
+    {
+        "model": "books.notification",
+        "pk": 2,
+        "fields": {
+            "user": 3,
+            "book": 2,
+            "is_available": false,
+            "message": "Your rented book 'The Lord of the Rings' is due on 2024-02-09",
+            "is_read": false,
+            "created_at": "2024-01-10T14:45:00Z"
+        }
+    },
+    {
+        "model": "books.notification",
+        "pk": 3,
+        "fields": {
+            "user": 6,
+            "book": 3,
+            "is_available": true,
+            "message": "Książka The Hobbit jest gotowa do wypożyczenia",
+            "is_read": false,
+            "created_at": "2024-12-01T20:59:23.824Z"
+        }
+    },
+    {
+        "model": "books.notification",
+        "pk": 4,
+        "fields": {
+            "user": 8,
+            "book": 4,
+            "is_available": true,
+            "message": "Książka To Kill a Mockingbird jest gotowa do wypożyczenia",
+            "is_read": false,
+            "created_at": "2024-12-01T21:08:09.167Z"
+        }
+    }
+]

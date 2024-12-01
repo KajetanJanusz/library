@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Lista użytkowników{% endblock %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .users-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .users-title {
+        text-align: center; 
+        color: var(--primary-color); 
+        margin-bottom: 2rem;
+    }
+
+    .users-table {
+        width: 100%;
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .users-table thead {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .users-table th, .users-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--background-color);
+    }
+
+    .users-table tbody tr:hover {
+        background-color: #f0f4f8;
+        transition: background-color 0.3s ease;
+    }
+
+    .users-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .users-table a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .users-table a:hover {
+        color: var(--hover-color);
+        text-decoration: underline;
+    }
+
+    .users-empty-state {
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .users-add-button {
+        display: block;
+        width: 200px;
+        margin: 2rem auto;
+        padding: 0.75rem 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .users-add-button:hover {
+        background-color: var(--hover-color);
+    }
+
+    @media screen and (max-width: 768px) {
+        .users-container {
+            padding: 0.5rem;
+        }
+
+        .users-table th, .users-table td {
+            padding: 0.75rem;
+        }
+    }
+</style>
+<div class="users-container">
+    <h1 class="users-title">Lista użytkowników</h1>
+    <table class="users-table">
+        <thead>
+            <tr>
+                <th>Imię i nazwisko</th>
+                <th>Email</th>
+                <th>Data rejestracji</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in object_list %}
+                <tr>
+                    <td>{{ user.get_full_name }}</td>
+                    <td><a href="{% url 'detail_user' user.id %}">{{ user.email }}</a></td>
+                    <td>{{ user.date_joined }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3" class="users-empty-state">Brak użytkowników.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <a href="{% url 'add_user' %}" class="users-add-button">Dodaj użytkownika</a>
+</div>
+{% endblock %}

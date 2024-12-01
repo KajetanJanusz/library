@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% block title %}Szczegóły książki{% endblock %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .book-detail-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .book-main-details {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .book-main-details h1 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .book-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .book-details-grid p {
+        background-color: var(--background-color);
+        padding: 0.75rem;
+        border-radius: 6px;
+    }
+
+    .book-description {
+        grid-column: 1 / -1;
+    }
+
+    .book-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .book-actions button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .book-actions button:hover {
+        background-color: var(--hover-color);
+    }
+
+    .book-side-details {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .book-side-details h2 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .comments-list {
+        list-style-type: none;
+    }
+
+    .comments-list li {
+        background-color: var(--background-color);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+    }
+
+    .comment-rating {
+        color: #f39c12;
+        font-weight: bold;
+    }
+
+    .add-comment-form {
+        background-color: var(--card-background);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-top: 1.5rem;
+    }
+
+    .add-comment-form h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .add-comment-form form p {
+        margin-bottom: 1rem;
+    }
+
+    .add-comment-form input, 
+    .add-comment-form textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 2rem;
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: var(--hover-color);
+    }
+
+    @media screen and (max-width: 768px) {
+        .book-detail-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<div class="book-detail-container">
+    <div class="book-main-details">
+        <h1>{{ book.title }}</h1>
+        <div class="book-details-grid">
+            <p><strong>Autor:</strong> {{ book.author }}</p>
+            <p><strong>Kategoria:</strong> {{ book.category.name }}</p>
+            <p><strong>Data publikacji:</strong> {{ book.published_date }}</p>
+            <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+            <p class="book-description"><strong>Opis:</strong> {{ book.description|default:"Brak opisu" }}</p>
+            <p><strong>Liczba wszystkich kopii:</strong> {{ copies.count }}</p>
+            <p><strong>Liczba dostępnych kopii:</strong> {{ available_copies }}</p>
+        </div>
+    <div class="book-actions">
+        {% if copies_available == False and not request.user.is_employee %}
+        <form method="post" action="{% url 'subscribe_book' pk=book.id %}">
+            {% csrf_token %}
+            <button type="submit">Subskrybuj powiadomienia</button>
+        </form>
+        {% endif %}
+
+        {% if copies_available == True and not request.user.is_employee or request.user.is_admin %}
+        <form method="post" action="{% url 'borrow_book' pk=book.id %}">
+            {% csrf_token %}
+            <button type="submit">Wypożycz książkę</button>
+        </form>
+        {% endif %}
+        
+        {% if request.user.is_employee %}
+        <form method="get" action="{% url 'edit_book' pk=book.id %}">
+            {% csrf_token %}
+            <button type="submit">Edytuj książkę</button>
+        </form>
+        <form method="get" action="{% url 'delete_book' pk=book.id %}">
+            {% csrf_token %}
+            <button type="submit">Usuń książkę</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="book-side-details">
+    <h2>Komentarze</h2>
+    {% if opinions %}
+        <ul class="comments-list">
+            {% for opinion in opinions %}
+                <li>
+                    <strong>{{ opinion.user.email }}</strong> ({{ opinion.created_at|date:"d-m-Y" }}): 
+                    <span class="comment-rating">Ocena: {{ opinion.rate }}/5</span><br>
+                    {{ opinion.comment }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Brak komentarzy</p>
+    {% endif %}
+
+    {% if comment_form %}
+    <div class="add-comment-form">
+        <h3>Dodaj komentarz</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit">Dodaj komentarz</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+</div>
+<a href="{% url 'list_books' %}" class="back-link">Powrót do listy książek</a>
+{% endblock %}

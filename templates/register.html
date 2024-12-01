@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Rejestracja - Biblioteka{% endblock %}
+
+{% block content %}
+<title>Rejestracja - Panel Klienta</title>
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .register-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .register-card {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .register-card-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .register-card-header h2 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        color: var(--text-color);
+        font-weight: bold;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
+    }
+
+    .form-group input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    .text-danger {
+        font-size: 0.875rem;
+        color: #e74c3c;
+    }
+
+    .btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        width: 100%;
+        border-radius: 4px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: var(--hover-color);
+    }
+
+    .register-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .register-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    .register-footer a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-card">
+        <div class="register-card-header">
+            <h2>Rejestracja</h2>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <small class="text-danger">{{ error }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn">Zarejestruj się</button>
+        </form>
+
+        <div class="register-footer">
+            <p>Masz już konto? <a href="{% url 'login' %}">Zaloguj się</a></p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Edytuj książkę{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .book-edit-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .book-edit-section {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .book-edit-section:hover {
+        transform: translateY(-5px);
+    }
+
+    .book-edit-section h1 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .book-edit-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .book-edit-form p {
+        margin-bottom: 1rem;
+    }
+
+    .book-edit-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .book-edit-form input,
+    .book-edit-form select,
+    .book-edit-form textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: var(--background-color);
+    }
+
+    .book-edit-form button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        align-self: center;
+        margin-top: 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .book-edit-form button:hover {
+        background-color: var(--hover-color);
+    }
+
+    .book-edit-form .helptext {
+        font-size: 0.8rem;
+        color: rgba(0, 0, 0, 0.6);
+        margin-top: 0.25rem;
+    }
+
+    .book-edit-form .errorlist {
+        color: #e74c3c;
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+<div class="book-edit-container">
+    <div class="book-edit-section">
+        <h1>Edytuj książkę</h1>
+
+        <form method="post" class="book-edit-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <p>
+                    {{ field.label_tag }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <span class="helptext">{{ field.help_text }}</span>
+                    {% endif %}
+                </p>
+            {% endfor %}
+            <button type="submit">Edytuj książkę</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

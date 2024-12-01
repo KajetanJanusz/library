@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Usuwanie użytkownika{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+        --danger-color: #e74c3c;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .user-delete-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .user-delete-section {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .user-delete-section:hover {
+        transform: translateY(-5px);
+    }
+
+    .user-delete-section h1 {
+        color: var(--danger-color);
+        border-bottom: 2px solid var(--danger-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .user-delete-content {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .user-delete-form {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .user-delete-confirm-button {
+        background-color: var(--danger-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .user-delete-confirm-button:hover {
+        background-color: #c0392b;
+    }
+
+    .user-delete-cancel-button {
+        background-color: #95a5a6;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: background-color 0.3s ease;
+    }
+
+    .user-delete-cancel-button:hover {
+        background-color: #7f8c8d;
+    }
+
+    .user-delete-warning {
+        color: var(--danger-color);
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="user-delete-container">
+    <div class="user-delete-section">
+        <h1>Usuwanie książki</h1>
+        
+        <div class="user-delete-content">
+            <p class="user-delete-warning">Uwaga: Ta operacja jest nieodwracalna!</p>
+            <p>Chcesz usunąć książkę <strong>{{ book.title }}</strong>?</p>
+        </div>
+
+        <form method="post" class="user-delete-form">
+            {% csrf_token %}
+            <button type="submit" class="user-delete-confirm-button">Potwierdź usunięcie</button>
+            <a href="{% url 'detail_user' request.user.id %}" class="user-delete-cancel-button">Cofnij</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
