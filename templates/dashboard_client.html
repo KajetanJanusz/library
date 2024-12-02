@@ -109,6 +109,28 @@
         font-weight: bold;
     }
 
+    .expand-button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        margin-top: 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .expand-button:hover {
+        background-color: var(--hover-color);
+    }
+
+    .dashboard-list.collapsed li:nth-child(n+4) {
+        display: none;
+    }
+
     @media screen and (max-width: 1200px) {
         .dashboard-grid {
             grid-template-columns: repeat(2, 1fr);
@@ -166,7 +188,7 @@
                 {% for rental in rented_books %}
                 <li>
                     <strong>Książka:</strong> {{ rental.book_copy.book.title }}<br>
-                    <strong>Status:</strong> <span class="rental-status-rented">{{ rental.status }}</span><br>
+                    <strong>Status:</strong> <span class="rental-status-rented">{{ rental.get_status_display }}</span><br>
                     <strong>Data wypożyczenia:</strong> {{ rental.rental_date }}<br>
                     <strong>Termin zwrotu:</strong> {{ rental.due_date }}<br>
                     <div class="dashboard-form-buttons">
@@ -194,7 +216,7 @@
         <div class="dashboard-section">
             <h2>Twoje Opinie</h2>
             {% if opinions %}
-            <ul class="dashboard-list">
+            <ul class="dashboard-list opinions-list collapsed">
                 {% for opinion in opinions %}
                 <li>
                     <strong>Książka:</strong> {{ opinion.book.title }}<br>
@@ -222,7 +244,7 @@
         <div class="dashboard-section">
             <h2>Historia Wypożyczeń</h2>
             {% if rented_books_old %}
-            <ul class="dashboard-list">
+            <ul class="dashboard-list rental-history-list collapsed">
                 {% for rental in rented_books_old %}
                 <li>
                     <strong>Książka:</strong> {{ rental.book_copy.book.title }}<br>
@@ -247,7 +269,32 @@
         </div>
     </div>
 </div>
-</body>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function addExpandButton(listSelector, buttonText) {
+        const list = document.querySelector(listSelector);
+        
+        if (list && list.querySelectorAll('li').length > 3) {
+            const expandButton = document.createElement('button');
+            expandButton.textContent = buttonText;
+            expandButton.classList.add('expand-button');
+            
+            expandButton.addEventListener('click', function() {
+                list.classList.toggle('collapsed');
+                expandButton.textContent = list.classList.contains('collapsed') 
+                    ? buttonText 
+                    : 'Zwiń listę';
+            });
+            
+            list.parentNode.insertBefore(expandButton, list.nextSibling);
+        }
+    }
+
+    addExpandButton('.opinions-list', 'Pokaż wszystkie opinie');
+    addExpandButton('.rental-history-list', 'Pokaż pełną historię wypożyczeń');
+});
+</script>
+</body>
 
 {% endblock %}

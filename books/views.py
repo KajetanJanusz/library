@@ -10,6 +10,8 @@ from django.views import View
 from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count, Case, When, Value, IntegerField, Sum
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.forms import PasswordResetForm
 
 from books.models import Book, BookRental, BookCopy, Category, Notification, Opinion
 from books import forms
@@ -162,7 +164,7 @@ class DetailBookView(LoginRequiredMixin, DetailView):
             notification = Notification.objects.get(user=self.request.user, book=self.get_object(), is_read=False)
             notification.is_read = True
             notification.save()
-
+            
         return response
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -212,7 +214,7 @@ class DashboardEmployeeView(LoginRequiredMixin, EmployeeMixin, DetailView):
         customers = CustomUser.objects.filter(is_employee=False)
         overdue_rentals = BookRental.objects.filter(status='overdue')
         user = self.get_object()
-        rented_books = BookRental.objects.filter(status='rented')[:3]
+        rented_books = BookRental.objects.filter(status='rented')
         users_rented_books = BookRental.objects.filter(user=user, status='rented')
         rented_books_old = BookRental.objects.filter(user=user, status='returned')
         notifications = Notification.objects.filter(user=user, is_read=False, is_available=True)
@@ -325,7 +327,6 @@ class ListBorrowsView(LoginRequiredMixin, EmployeeMixin, ListView):
             output_field=IntegerField()
         )
         
-        # Order the rentals by the custom status priority and then by most recent rental date
         return BookRental.objects.annotate(
             status_priority=status_order
         ).order_by('status_priority', '-rental_date')
@@ -386,3 +387,18 @@ class AddUserView(LoginRequiredMixin, AdminMixin, CreateView):
     form_class = forms.CustomUserForm
     success_url = reverse_lazy('list_users')
 
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'password_reset.html' 
+    email_template_name = 'password_reset_email.html' 
+    success_url = reverse_lazy('password_reset_done')
+    form_class = PasswordResetForm
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'password_reset_done.html'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'accounts/password_reset_complete.html'

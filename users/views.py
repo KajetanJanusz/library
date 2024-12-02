@@ -1,5 +1,8 @@
 # views.py
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import authenticate
+from django.forms import BaseForm
+from django.http.response import HttpResponse
 from django.views import View
 from django.views.generic import CreateView
 from django.shortcuts import redirect
@@ -14,6 +17,14 @@ class UserRegistrationView(SuccessMessageMixin, CreateView):
     template_name = 'register.html'
     success_message = "Konto zostało utworzone pomyślnie! Możesz się teraz zalogować."
    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['username'].label = 'Nazwa użytkownika'
+        form.fields['password1'].label = 'Hasło'
+        form.fields['password2'].label = 'Powtórz hasło'
+        
+        return form
+
     def form_valid(self, form):
         response = super().form_valid(form)
         login(self.request, self.object)
@@ -40,6 +51,17 @@ class UserLoginView(SuccessMessageMixin, LoginView):
     def get_success_url(self):
            return reverse('dashboard_client', kwargs={'pk': self.request.user.id})
    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['username'].label = 'Nazwa użytkownika'
+        form.fields['password'].label = 'Hasło'
+        
+        return form
+    
+    def form_invalid(self, form):
+        messages.error(self.request,'Dane są nieprawidłowe lub twoje konto jest zablokowane.')
+        return redirect('login')
+        
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_employee and request.user.is_active:
             return redirect('dashboard_employee', pk=request.user.id)

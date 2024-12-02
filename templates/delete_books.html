@@ -113,7 +113,7 @@
         <form method="post" class="user-delete-form">
             {% csrf_token %}
             <button type="submit" class="user-delete-confirm-button">Potwierdź usunięcie</button>
-            <a href="{% url 'detail_user' request.user.id %}" class="user-delete-cancel-button">Cofnij</a>
+            <a href="{% url 'detail_book' book.id %}" class="user-delete-cancel-button">Cofnij</a>
         </form>
     </div>
 </div>

@@ -12,7 +12,6 @@ class CustomerMixin(UserPassesTestMixin):
         return False
     
     def handle_no_permission(self):
-        messages.info(self.request, 'Nie masz uprawnień, żeby wejść na tą stronę')
         return redirect('login')
     
 class EmployeeMixin(UserPassesTestMixin):
@@ -23,7 +22,6 @@ class EmployeeMixin(UserPassesTestMixin):
         return False
     
     def handle_no_permission(self):
-        messages.info(self.request, 'Nie masz uprawnień, żeby wejść na tą stronę')
         return redirect('login')
     
 class AdminMixin(UserPassesTestMixin):
@@ -34,6 +32,5 @@ class AdminMixin(UserPassesTestMixin):
         return False
     
     def handle_no_permission(self):
-        messages.info(self.request, 'Nie masz uprawnień, żeby wejść na tą stronę')
         return redirect('login')
     
