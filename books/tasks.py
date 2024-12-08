@@ -1,4 +1,3 @@
-# tasks.py
 from library.celery import app
 from django.utils import timezone
 from django.core.mail import send_mail

@@ -1,6 +1,6 @@
 [
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 1,
         "fields": {
             "username": "admin",
@@ -16,7 +16,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 2,
         "fields": {
             "username": "john_doe",
@@ -31,7 +31,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 3,
         "fields": {
             "username": "jane_smith",
@@ -46,7 +46,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 4,
         "fields": {
             "username": "alice_jones",
@@ -61,7 +61,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 5,
         "fields": {
             "username": "bob_brown",
@@ -76,7 +76,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 6,
         "fields": {
             "username": "jan_nowak",
@@ -91,7 +91,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 7,
         "fields": {
             "password": "pbkdf2_sha256$870000$FDniLDcuH4tH9IucB3INsB$bf3mrgUcuefuviARRftdpYat+DiyILJnfULG0dED5lo=",
@@ -112,7 +112,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 8,
         "fields": {
             "password": "pbkdf2_sha256$870000$srq6wNsSRpCVjOqEaCRPzh$cGEW+FsTF6Xu2PTz7+CCNh4OdLtoli7MNfQgjEplQEA=",
@@ -133,7 +133,7 @@
         }
     },
     {
-        "model": "users.customuser",
+        "model": "books.customuser",
         "pk": 9,
         "fields": {
             "password": "pbkdf2_sha256$870000$P8ohm4kYdj3rCafLR52u7A$xY7LpxtzaS8c6N+7zJpL4VaBM105omsmmw9kKrPq8UI=",

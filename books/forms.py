@@ -2,25 +2,26 @@ from typing import Any
 from django import forms
 from django.forms import Form, ModelForm
 from django.shortcuts import redirect
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import get_user_model
 
 from books.models import Book, BookCopy, BookRental, Opinion
-from users.models import CustomUser
+from books.models import CustomUser
 
 class BookForm(ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies', 'description']
+        fields = ['title', 'author', 'category', 'isbn', 'total_copies', 'description']
         labels = {
             'title': 'Tytuł',
             'author': 'Autor',
             'category': 'Kategoria',
-            'published_date': 'Data publikacji',
             'isbn': 'Numer ISBN',
             'total_copies': 'Całkowita liczba kopii',
             'description': 'Opis'
         }
         widgets = {
-            'published_date': forms.DateInput(attrs={'type': 'date'}),
             'description': forms.Textarea(attrs={'rows': 4}),
         }
 
@@ -33,7 +34,7 @@ class UserForm(ModelForm):
             'email': 'Adres e-mail',
             'first_name': 'Imię',
             'last_name': 'Nazwisko',
-            'phone': 'Numer telefonu'
+            'phone': 'Numer telefonu',
         }
         widgets = {
             'username': forms.TextInput(attrs={
@@ -94,3 +95,14 @@ class CustomUserForm(ModelForm):
         if commit:
             user.save()
         return user
+    
+class UserRegistrationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    
+    class Meta:
+        model = get_user_model()
+        fields = ['username', 'email', 'password1', 'password2']
+
+class UserLoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))

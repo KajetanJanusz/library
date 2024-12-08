@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 from typing import Iterable
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from users.models import CustomUser
 from django.core.validators import MaxValueValidator
 
 
@@ -23,6 +23,16 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class CustomUser(AbstractUser):
+    phone = models.CharField(max_length=15, null=True, blank=True)
+    is_employee = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.username
     
 class BookCopy(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="copies")
@@ -47,6 +57,7 @@ class BookRental(models.Model):
     ]
     status = models.CharField(max_length=10, choices=status_choices, default='rented')
     fine = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
+
 
     def __str__(self):
         return f"{self.user.username} rented {self.book_copy.book.title}, id {self.book_copy.book.id}"

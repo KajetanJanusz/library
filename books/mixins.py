@@ -2,7 +2,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import redirect
 from django.contrib import messages
 
-from users.models import CustomUser
+from books.models import CustomUser
 
 class CustomerMixin(UserPassesTestMixin):
 
