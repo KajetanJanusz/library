@@ -11,209 +11,245 @@
         --card-background: #ffffff;
         --hover-color: #357abd;
     }
-Copy* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    background-color: var(--background-color);
-    color: var(--text-color);
-}
-
-.container {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    gap: 2rem;
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 1rem;
-}
-
-.header-title {
-    color: var(--primary-color);
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.search-form {
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: center;
-}
-
-.search-form form {
-    display: flex;
-    width: 100%;
-    max-width: 500px;
-}
-
-.search-form input {
-    flex-grow: 1;
-    padding: 0.5rem;
-    border: 1px solid var(--primary-color);
-    border-radius: 4px 0 0 4px;
-}
-
-.search-form button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.search-form button:hover {
-    background-color: var(--hover-color);
-}
-
-.book-list {
-    background-color: var(--card-background);
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-}
-
-.book-list ul {
-    list-style-type: none;
-}
-
-.book-list li {
-    background-color: var(--background-color);
-    margin-bottom: 1rem;
-    padding: 1rem;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-}
-
-.book-list li:hover {
-    background-color: rgba(74, 144, 226, 0.1);
-}
-
-.book-list a {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.book-list a:hover {
-    text-decoration: underline;
-}
-
-.author {
-    color: rgba(0, 0, 0, 0.6);
-}
-
-.no-books {
-    color: rgba(0, 0, 0, 0.5);
-    text-align: center;
-}
-
-.categories {
-    background-color: var(--card-background);
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-    position: relative;
-}
-
-.categories h2 {
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-}
-
-.categories-dropdown {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-}
-
-.categories:hover .categories-dropdown {
-    max-height: 500px;
-    transition: max-height 0.5s ease-in;
-}
-
-.categories ul {
-    list-style-type: none;
-}
-
-.categories li {
-    margin-bottom: 0.5rem;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.categories:hover li {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.categories a {
-    color: var(--text-color);
-    text-decoration: none;
-    display: block;
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.categories a:hover {
-    background-color: var(--background-color);
-    color: var(--primary-color);
-}
-
-@media screen and (max-width: 768px) {
-    .container {
-        grid-template-columns: 1fr;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
-}
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .header-title {
+        color: var(--primary-color);
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-form {
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: center;
+        grid-column: 1 / -1;
+    }
+
+    .search-form form {
+        display: flex;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    .search-form input {
+        flex-grow: 1;
+        padding: 0.5rem;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px 0 0 4px;
+    }
+
+    .search-form button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .search-form button:hover {
+        background-color: var(--hover-color);
+    }
+
+    .book-list {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+
+    .book-list ul {
+        list-style-type: none;
+    }
+
+    .book-list li {
+        background-color: var(--background-color);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+
+    .book-list li:hover {
+        background-color: rgba(74, 144, 226, 0.1);
+    }
+
+    .book-list a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .book-list a:hover {
+        text-decoration: underline;
+    }
+
+    .author {
+        color: rgba(0, 0, 0, 0.6);
+    }
+
+    .no-books {
+        color: rgba(0, 0, 0, 0.5);
+        text-align: center;
+    }
+
+    .categories {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        position: relative;
+    }
+
+    .categories h2 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+    }
+
+    .categories ul {
+        list-style-type: none;
+    }
+
+    .categories:hover li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .categories a {
+        color: var(--text-color);
+        text-decoration: none;
+        display: block;
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .categories a:hover {
+        background-color: var(--background-color);
+        color: var(--primary-color);
+    }
+
+    @media screen and (max-width: 768px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+        padding: 0.5rem;
+    }
+
+    .pagination .step-links {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pagination .step-links a {
+        color: var(--primary-color);
+        text-decoration: none;
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--primary-color);
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+
+    .pagination .step-links a:hover {
+        background-color: var(--primary-color);
+        color: white;
+    }
+
+    .pagination .current {
+        margin: 0 1rem;
+        color: rgba(0, 0, 0, 0.6);
+    }
 </style>
-    <!-- Formularz wyszukiwania -->
+
+<div class="container">
     <div class="search-form">
         <form method="get" action="{% url 'list_books' %}">
             <input type="text" name="q" placeholder="Wyszukaj książki..." value="{{ request.GET.q }}">
             <button type="submit">Szukaj</button>
         </form>
     </div>
-    <div class="categories">
-    <h2>Kategorie</h2>
-    <div class="categories-dropdown">
-        <ul>
-            <li><a href="{% url 'list_books' %}">Wszystkie</a></li>
-            {% for category in categories %}
-                <li><a href="{% url 'list_books' %}?q={{ category }}">{{ category }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
 
-<!-- Lista książek -->
-<div class="book-list">
-    {% if books %}
-        <ul>
-            {% for book in books %}
-                <li>
-                    <span>
-                        <a href="{% url 'detail_book' book.id %}">{{ book.title }}</a> 
-                        - <span class="author">{{ book.author }}</span>
-                        - Dostępne kopie: {{ book.available_copies }}
+    <div class="book-list">
+        {% if books %}
+            <ul>
+                {% for book in books %}
+                    <li>
+                        <span>
+                            <a href="{% url 'detail_book' book.id %}">{{ book.title }}</a> 
+                            - <span class="author">{{ book.author }}</span>
+                            - Dostępne kopie: {{ book.available_copies }}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Poprzednia</a>
+                    {% endif %}
+            
+                    <span class="current">
+                        Strona {{ page_obj.number }} z {{ page_obj.paginator.num_pages }}
                     </span>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="no-books">Brak książek spełniających kryteria wyszukiwania.</p>
-    {% endif %}
+            
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Następna</a>
+                    {% endif %}
+                </span>
+            </div>
+            
+        {% else %}
+            <p class="no-books">Brak książek spełniających kryteria wyszukiwania.</p>
+        {% endif %}
+    </div>
+
+    <div class="categories">
+        <h2>Kategorie</h2>
+        <div class="categories-dropdown">
+            <ul>
+                <li><a href="{% url 'list_books' %}">Wszystkie</a></li>
+                {% for category in categories %}
+                    <li><a href="{% url 'list_books' %}?q={{ category }}">{{ category }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </div>
 {% endblock %}

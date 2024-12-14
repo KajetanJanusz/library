@@ -158,7 +158,7 @@
         "pk": 1,
         "fields": {
             "name": "Science Fiction",
-            "description": "Imaginative and futuristic fiction based on scientific or technological advances"
+            "description": "Imaginacyjna i futurystyczna fikcja oparta na postępach naukowych lub technologicznych"
         }
     },
     {
@@ -166,7 +166,7 @@
         "pk": 2,
         "fields": {
             "name": "Fantasy",
-            "description": "Fiction involving magic or supernatural elements"
+            "description": "Fikcja zawierająca magię lub elementy nadprzyrodzone"
         }
     },
     {
@@ -174,216 +174,28 @@
         "pk": 3,
         "fields": {
             "name": "Non-Fiction",
-            "description": "Informative books based on facts and real events"
+            "description": "Książki informacyjne oparte na faktach i prawdziwych wydarzeniach"
         }
     },
     {
         "model": "books.category",
         "pk": 4,
         "fields": {
-            "name": "Mystery",
-            "description": "Fiction dealing with the solution of a crime or the unraveling of a puzzle"
+            "name": "Kryminał",
+            "description": "Fikcja zajmująca się rozwiązaniem zbrodni lub rozwikłaniem zagadki"
         }
     },
     {
         "model": "books.category",
         "pk": 5,
         "fields": {
-            "name": "Biography",
-            "description": "Non-fiction accounts of a person's life"
+            "name": "Biografia",
+            "description": "Niefikcyjne relacje z życia danej osoby"
         }
-    },
-    {
-        "model": "books.book",
-        "pk": 1,
-        "fields": {
-            "title": "Dune",
-            "author": "Frank Herbert",
-            "category": 1,
-            "published_date": "1965-08-01",
-            "isbn": "9780441172719",
-            "description": "A science fiction novel about a young nobleman's journey on a desert planet",
-            "total_copies": 5
-        }
-    },
-    {
-        "model": "books.book",
-        "pk": 2,
-        "fields": {
-            "title": "The Lord of the Rings",
-            "author": "J.R.R. Tolkien",
-            "category": 2,
-            "published_date": "1954-07-29",
-            "isbn": "9780261102385",
-            "description": "An epic high fantasy novel that follows hobbits on a quest to destroy a powerful ring",
-            "total_copies": 3
-        }
-    },
-    {
-        "model": "books.book",
-        "pk": 3,
-        "fields": {
-            "title": "The Hobbit",
-            "author": "J.R.R. Tolkien",
-            "category": 2,
-            "published_date": "1937-09-21",
-            "isbn": "9780345339683",
-            "description": "The prelude to The Lord of the Rings, detailing Bilbo Baggins' adventure",
-            "total_copies": 1
-        }
-    },
-    {
-        "model": "books.book",
-        "pk": 4,
-        "fields": {
-            "title": "To Kill a Mockingbird",
-            "author": "Harper Lee",
-            "category": 3,
-            "published_date": "1960-07-11",
-            "isbn": "9780061120084",
-            "description": "A novel set in the Deep South, addressing serious issues such as racial injustice.",
-            "total_copies": 2
-        }
-    },
-    {
-        "model": "books.book",
-        "pk": 5,
-        "fields": {
-            "title": "The Great Gatsby",
-            "author": "F. Scott Fitzgerald",
-            "category": 3,
-            "published_date": "1925-04-10",
-            "isbn": "9780743273565",
-            "description": "A novel about the American dream and life in the Jazz Age.",
-            "total_copies": 3
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 1,
-        "fields": {
-            "book": 1,
-            "is_available": false,
-            "borrower": 2
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 2,
-        "fields": {
-            "book": 1,
-            "is_available": true,
-            "borrower": null
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 3,
-        "fields": {
-            "book": 1,
-            "is_available": false,
-            "borrower": 1
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 4,
-        "fields": {
-            "book": 1,
-            "is_available": true,
-            "borrower": null
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 5,
-        "fields": {
-            "book": 1,
-            "is_available": true,
-            "borrower": null
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 6,
-        "fields": {
-            "book": 2,
-            "is_available": false,
-            "borrower": 3
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 7,
-        "fields": {
-            "book": 2,
-            "is_available": true,
-            "borrower": null
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 8,
-        "fields": {
-            "book": 2,
-            "is_available": false,
-            "borrower": 1
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 9,
-        "fields": {
-            "book": 3,
-            "is_available": true,
-            "borrower": null
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 10,
-        "fields": {
-            "book": 4,
-            "is_available": true,
-            "borrower": null
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 11,
-        "fields": {
-            "book": 4,
-            "is_available": false,
-            "borrower": 4
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 12,
-        "fields": {
-            "book": 5,
-            "is_available": false,
-            "borrower": 5
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 13,
-        "fields": {
-            "book": 5,
-            "is_available": true,
-            "borrower": null
-        }
-    },
-    {
-        "model": "books.bookcopy",
-        "pk": 14,
-        "fields": {
-            "book": 5,
-            "is_available": false,
-            "borrower": 2
-        }
-    },
+    }
+    ,
+    {"model": "books.book", "pk": 1, "fields": {"title": "Diuna", "author": "Frank Herbert", "category": 1, "published_date": "1965-08-01", "isbn": "9780441172719", "description": "Powieść science fiction o podróży młodego szlachcica na pustynnej planecie", "total_copies": 5}}, {"model": "books.book", "pk": 2, "fields": {"title": "Władca Pierścieni", "author": "J.R.R. Tolkien", "category": 2, "published_date": "1954-07-29", "isbn": "9780261102385", "description": "Epicka powieść fantasy o hobbitach na misji zniszczenia potężnego pierścienia", "total_copies": 3}}, {"model": "books.book", "pk": 3, "fields": {"title": "Hobbit", "author": "J.R.R. Tolkien", "category": 2, "published_date": "1937-09-21", "isbn": "9780345339683", "description": "Prequel Władcy Pierścieni, opowiadający o przygodzie Bilbo Bagginsa", "total_copies": 1}}, {"model": "books.book", "pk": 4, "fields": {"title": "Zabić drozda", "author": "Harper Lee", "category": 3, "published_date": "1960-07-11", "isbn": "9780061120084", "description": "Powieść osadzona na głębokim południu USA, poruszająca poważne tematy, takie jak niesprawiedliwość rasowa.", "total_copies": 2}}, {"model": "books.book", "pk": 5, "fields": {"title": "Wielki Gatsby", "author": "F. Scott Fitzgerald", "category": 3, "published_date": "1925-04-10", "isbn": "9780743273565", "description": "Powieść o amerykańskim śnie i życiu w czasach jazzu.", "total_copies": 3}}, {"model": "books.book", "pk": 6, "fields": {"title": "Wiedźmin: Ostatnie życzenie", "author": "Andrzej Sapkowski", "category": 2, "published_date": "1993-02-03", "isbn": "9788375780386", "description": "Pierwsza książka z serii o Geralcie z Rivii, wiedźminie - mutancie polujących na monstra. Zbiór opowiadań wprowadzających czytelnika w mroczny świat pełen magii, potworów i niebezpiecznych intryg. Książka przedstawia genezę postaci Geralta, jego umiejętności i zasady moralne, które kierują jego życiem.", "total_copies": 5}}, {"model": "books.book", "pk": 7, "fields": {"title": "Mrok w sam raz", "author": "Remigiusz Mróz", "category": 4, "published_date": "2017-08-08", "isbn": "9788381252019", "description": "Kryminał o młodej prokuratorce Joannie Chyłce, która prowadzi śledztwo w skomplikowanej sprawie zabójstwa. Książka pełna zwrotów akcji, psychologicznych zagadek i mrocznej atmosfery śledztwa, która wciąga czytelnika od pierwszych stron.", "total_copies": 6}}, {"model": "books.book", "pk": 8, "fields": {"title": "Solaris", "author": "Stanisław Lem", "category": 1, "published_date": "1961-12-12", "isbn": "9788379989012", "description": "Klasyczna powieść science fiction badająca granice ludzkiego poznania i komunikacji z całkowicie obcą formą inteligencji. Opowiada o psychologicznych zmaganiach naukowców próbujących zrozumieć tajemniczą, myślącą planetę Solaris, która materializuje ich najskrytsze wspomnienia i pragnienia.", "total_copies": 10}}, {"model": "books.book", "pk": 9, "fields": {"title": "Krótka historia czasu", "author": "Stephen Hawking", "category": 3, "published_date": "1988-09-29", "isbn": "9788375797367", "description": "Przełomowa książka popularnonaukowa wyjaśniająca skomplikowane zagadnienia fizyki i kosmosu w przystępny sposób. Hawking przedstawia fundamentalne koncepcje dotyczące przestrzeni, czasu, czarnych dziur i początków wszechświata, czyniąc je zrozumiałymi dla szerokiego grona czytelników.", "total_copies": 3}}, {"model": "books.book", "pk": 10, "fields": {"title": "Dzienniki gwałtu", "author": "Zofia Nałkowska", "category": 5, "published_date": "1946-05-17", "isbn": "9788375781321", "description": "Wstrząsający dokument z czasów II wojny światowej, będący świadectwem okrucieństwa i ludzkich cierpień. Nałkowska opisuje prawdziwe historie ofiar wojny, koncentrując się na losach kobiet i ich dramatycznych doświadczeniach podczas okupacji.", "total_copies": 7}}, {"model": "books.book", "pk": 11, "fields": {"title": "II wojna światowa", "author": "Martin Gilbert", "category": 3, "published_date": "1989-12-31", "isbn": "9788375100320", "description": "Wyjątkowa kronika jednego z najważniejszych i najbardziej dramatycznych konfliktów w historii ludzkości. Książka przedstawia przebieg II wojny światowej od jej przyczyn, przez kluczowe bitwy i decyzje polityczne, po jej tragiczne konsekwencje dla całego świata. Martin Gilbert, wybitny historyk, opiera się na bogatych materiałach źródłowych, w tym dokumentach i relacjach świadków, tworząc wnikliwy obraz wojennego chaosu, bohaterstwa i cierpienia.", "total_copies": 4}},
+    {"model": "books.bookcopy", "pk": 1, "fields": {"book": 1, "is_available": false, "borrower": 2}}, {"model": "books.bookcopy", "pk": 2, "fields": {"book": 1, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 3, "fields": {"book": 1, "is_available": false, "borrower": 1}}, {"model": "books.bookcopy", "pk": 4, "fields": {"book": 1, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 5, "fields": {"book": 1, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 6, "fields": {"book": 2, "is_available": false, "borrower": 3}}, {"model": "books.bookcopy", "pk": 7, "fields": {"book": 2, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 8, "fields": {"book": 2, "is_available": false, "borrower": 1}}, {"model": "books.bookcopy", "pk": 9, "fields": {"book": 3, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 10, "fields": {"book": 4, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 11, "fields": {"book": 4, "is_available": false, "borrower": 4}}, {"model": "books.bookcopy", "pk": 12, "fields": {"book": 5, "is_available": false, "borrower": 5}}, {"model": "books.bookcopy", "pk": 13, "fields": {"book": 5, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 14, "fields": {"book": 5, "is_available": false, "borrower": 2}}, {"model": "books.bookcopy", "pk": 15, "fields": {"book": 6, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 16, "fields": {"book": 6, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 17, "fields": {"book": 6, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 18, "fields": {"book": 6, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 19, "fields": {"book": 6, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 20, "fields": {"book": 7, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 21, "fields": {"book": 7, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 22, "fields": {"book": 7, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 23, "fields": {"book": 7, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 24, "fields": {"book": 7, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 25, "fields": {"book": 7, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 26, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 27, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 28, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 29, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 30, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 31, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 32, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 33, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 34, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 35, "fields": {"book": 8, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 36, "fields": {"book": 9, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 37, "fields": {"book": 9, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 38, "fields": {"book": 9, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 39, "fields": {"book": 10, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 40, "fields": {"book": 10, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 41, "fields": {"book": 10, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 42, "fields": {"book": 10, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 43, "fields": {"book": 10, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 44, "fields": {"book": 10, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 45, "fields": {"book": 10, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 46, "fields": {"book": 11, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 47, "fields": {"book": 11, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 48, "fields": {"book": 11, "is_available": true, "borrower": null}}, {"model": "books.bookcopy", "pk": 49, "fields": {"book": 11, "is_available": true, "borrower": null}},
     {
         "model": "books.bookrental",
         "pk": 1,
@@ -601,7 +413,7 @@
             "book": 2,
             "user": 3,
             "rate": 4,
-            "comment": "A thrilling adventure in a fantastical world!",
+            "comment": "Ekscytująca przygoda w fantastycznym świecie!",
             "created_at": "2024-01-25"
         }
     },
@@ -612,7 +424,7 @@
             "book": 3,
             "user": 4,
             "rate": 5,
-            "comment": "Informative and captivating read for history enthusiasts.",
+            "comment": "Pouczająca i wciągająca lektura dla entuzjastów historii.",
             "created_at": "2024-02-01"
         }
     },
@@ -623,7 +435,7 @@
             "book": 4,
             "user": 5,
             "rate": 3,
-            "comment": "A decent book, but the pacing felt a bit off.",
+            "comment": "Przeciętna książka, choć tempo akcji było trochę niepasujące.",
             "created_at": "2024-02-05"
         }
     },
@@ -634,7 +446,7 @@
             "book": 5,
             "user": 1,
             "rate": 4,
-            "comment": "Great concepts, but could use more depth in the story.",
+            "comment": "Świetne koncepcje, ale mogłoby być więcej głębi w fabule.",
             "created_at": "2024-02-10"
         }
     },
@@ -645,7 +457,7 @@
             "book": 1,
             "user": 3,
             "rate": 5,
-            "comment": "Still one of the best sci-fi novels I’ve read!",
+            "comment": "Wciąż jedna z najlepszych powieści science fiction, jakie czytałem!",
             "created_at": "2024-02-12"
         }
     },
@@ -656,7 +468,7 @@
             "book": 1,
             "user": 8,
             "rate": 5,
-            "comment": "Great experience!",
+            "comment": "Świetne doświadczenie!",
             "created_at": "2024-12-01"
         }
     },
@@ -667,7 +479,7 @@
             "book": 2,
             "user": 8,
             "rate": 3,
-            "comment": "Mid",
+            "comment": "Przeciętne",
             "created_at": "2024-12-01"
         }
     },

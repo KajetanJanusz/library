@@ -133,6 +133,8 @@
         </tbody>
     </table>
     
-    <a href="{% url 'add_user' %}" class="users-add-button">Dodaj użytkownika</a>
+    {% if request.user.is_admin == True %}
+        <a href="{% url 'add_user' %}" class="users-add-button">Dodaj użytkownika</a>
+    {% endif %}
 </div>
 {% endblock %}

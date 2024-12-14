@@ -2,6 +2,10 @@ from django.db.models import Count
 from .models import BookRental, Book, Category
 
 def recommend_books_for_user(user):
+    '''
+    Wybier 3 książki do polecenie dla użytkownika 
+    na podstawie kateogorii wcześniej wypożyczanych książek
+    '''
     top_category = (
         BookRental.objects
         .filter(user=user)

@@ -9,7 +9,25 @@ from django.contrib.auth import get_user_model
 from books.models import Book, BookCopy, BookRental, Opinion
 from books.models import CustomUser
 
-class BookForm(ModelForm):
+class AddBookForm(ModelForm):
+    class Meta:
+        model = Book
+        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies', 'description']
+        labels = {
+            'title': 'Tytuł',
+            'author': 'Autor',
+            'category': 'Kategoria',
+            'published_date': 'Data publikacji',
+            'isbn': 'Numer ISBN',
+            'total_copies': 'Całkowita liczba kopii',
+            'description': 'Opis'
+        }
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'published_date': forms.DateInput(attrs={'type': 'date'})
+        }
+
+class EditBookForm(ModelForm):
     class Meta:
         model = Book
         fields = ['title', 'author', 'category', 'isbn', 'total_copies', 'description']
@@ -25,7 +43,7 @@ class BookForm(ModelForm):
             'description': forms.Textarea(attrs={'rows': 4}),
         }
 
-class UserForm(ModelForm):
+class EditUserForm(ModelForm):
     class Meta:
         model = CustomUser
         fields = ('username', 'email', 'first_name', 'last_name', 'phone')
@@ -58,7 +76,7 @@ class OpinionForm(ModelForm):
             'comment': forms.Textarea(attrs={'rows': 4})
         }
 
-class CustomUserForm(ModelForm):
+class AdminUserForm(ModelForm):
     class Meta:
         model = CustomUser
         fields = ('username', 

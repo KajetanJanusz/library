@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <style>
     :root {
         --primary-color: #4a90e2;
@@ -12,134 +11,126 @@
         --hover-color: #357abd;
     }
 
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
         background-color: var(--background-color);
         color: var(--text-color);
     }
 
-    .login-container {
-        max-width: 500px;
-        margin: 5rem auto;
-        padding: 2rem;
+    .book-add-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .book-add-section {
         background-color: var(--card-background);
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
     }
 
-    .login-header {
-        text-align: center;
-        margin-bottom: 2rem;
+    .book-add-section:hover {
+        transform: translateY(-5px);
     }
 
-    .login-header h2 {
+    .book-add-section h1 {
         color: var(--primary-color);
-        font-size: 1.5rem;
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
     }
 
-    .form-group {
+    .book-add-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .book-add-form p {
         margin-bottom: 1rem;
     }
 
-    .form-group label {
+    .book-add-form label {
         display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
         font-weight: bold;
     }
 
-    .form-group input {
+    .book-add-form input,
+    .book-add-form select,
+    .book-add-form textarea {
         width: 100%;
-        padding: 0.8rem;
+        padding: 0.75rem;
         border: 1px solid #ddd;
         border-radius: 4px;
-        font-size: 1rem;
-        background-color: #f9f9f9;
+        background-color: var(--background-color);
     }
 
-    .form-group input:focus {
-        border-color: var(--primary-color);
-        outline: none;
-    }
-
-    .form-group small {
-        color: #f39c12;
-    }
-
-    .login-button {
+    .book-add-form button {
         background-color: var(--primary-color);
         color: white;
         border: none;
-        padding: 0.8rem 1.5rem;
-        width: 100%;
+        padding: 0.75rem 1.5rem;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 1.1rem;
+        align-self: center;
+        margin-top: 1rem;
         transition: background-color 0.3s ease;
     }
 
-    .login-button:hover {
+    .book-add-form button:hover {
         background-color: var(--hover-color);
     }
 
-    .login-footer {
-        text-align: center;
-        margin-top: 2rem;
-        color: rgba(0, 0, 0, 0.7);
+    .book-add-form .helptext {
+        font-size: 0.8rem;
+        color: rgba(0, 0, 0, 0.6);
+        margin-top: 0.25rem;
     }
 
-    .login-footer a {
-        color: var(--primary-color);
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    .login-footer a:hover {
-        text-decoration: underline;
+    .book-add-form .errorlist {
+        color: #e74c3c;
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 0.5rem;
     }
 </style>
-<div class="login-container">
-    <div class="login-header">
+<div class="book-add-container">
+    <div class="book-add-section">
         <h2>Dodaj książkę</h2>
+
+
+        <form method="post" class="book-add-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <p>
+                    {{ field.label_tag }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <span class="helptext">{{ field.help_text }}</span>
+                    {% endif %}
+                </p>
+            {% endfor %}
+            <button type="submit">Dodaj książkę</button>
+        </form>
     </div>
-
-    <form method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="id_title">Tytuł książki</label>
-            {{ form.title }}
-        </div>
-        
-        <div class="form-group">
-            <label for="id_author">Autor</label>
-            {{ form.author }}
-        </div>
-
-        <div class="form-group">
-            <label for="id_category">Kategoria</label>
-            {{ form.category }}
-        </div>
-
-        <div class="form-group">
-            <label for="id_published_date">Data publikacji</label>
-            {{ form.published_date }}
-        </div>
-
-        <div class="form-group">
-            <label for="id_isbn">ISBN</label>
-            {{ form.isbn }}
-        </div>
-
-        <div class="form-group">
-            <label for="id_total_copies">Łączna liczba kopii</label>
-            {{ form.total_copies }}
-        </div>
-
-        <div class="form-group">
-            <label for="id_description">Opis</label>
-            {{ form.description }}
-        </div>
-
-        <button type="submit" class="login-button">Dodaj książkę</button>
-    </form>
 
 </div>
 {% endblock %}

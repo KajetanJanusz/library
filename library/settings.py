@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-*t+fd@g4e%%7bp$j#08^)5e+#85s+=#_ton^towb&^0xb8)72c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
 
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 STATIC_DIR=os.path.join(BASE_DIR,'static')
@@ -81,15 +81,19 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'biblioteka.testowanie1@gmail.com'
-EMAIL_HOST_PASSWORD = 'qblg mecy twpt zjzp'
+EMAIL_HOST_PASSWORD = 'jcie hcwd nysh aaes'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'postgres',
+        "USER": 'postgres',
+        "PASSWORD": 'postgres',
+        "HOST": 'db',
+        "PORT": 5432,
     }
 }
 

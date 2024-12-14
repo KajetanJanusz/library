@@ -27,6 +27,17 @@ from books.models import CustomUser
 from books.helpers import recommend_books_for_user
 
 class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
+    """
+    Widok pulpitu klienta wyświetlający spersonalizowane informacje użytkownika.
+
+        Funkcje:
+        - Wyświetla wypożyczone książki
+        - Pokazuje nieprzeczytane powiadomienia
+        - Prezentuje opinie użytkownika o książkach
+        - Udostępnia rekomendacje książek
+
+        Wymaga logowania i dostępu klienta.
+    """
     model = CustomUser
     template_name = "dashboard_client.html"
     context_object_name = "user"
@@ -49,6 +60,18 @@ class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
         return context
 
 class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
+    """
+    Widok obsługujący proces wypożyczania książek.
+        
+        Funkcje:
+        - Sprawdza dostępność książki
+        - Ogranicza użytkownika do 3 jednoczesnych wypożyczeń
+        - Tworzy nowe wypożyczenie
+        - Aktualizuje status egzemplarza książki
+        
+        Wymaga logowania i dostępu klienta.
+    """
+
     def post(self, request, *args, **kwargs):
         book = get_object_or_404(Book, id=self.kwargs.get('pk'))
         user = request.user
@@ -79,6 +102,17 @@ class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
         return redirect('dashboard_client', pk=request.user.id)
 
 class ReturnBook(LoginRequiredMixin, CustomerMixin, View):
+    """
+    Widok obsługujący zwrot książki.
+
+        Funkcje:
+        - Zmienia status wypożyczenia na 'zwrócony'
+        - Wyświetla potwierdzenie zwrotu
+        - Przywraca dostępność egzemplarza książki
+        - Aktualizuje powiadomienia
+        
+        Wymaga logowania i dostępu klienta.
+    """
     def get(self, request, *args, **kwargs):
         rental = get_object_or_404(BookRental, id=self.kwargs['pk'])
         return render(request, 'confirm_return.html', {'rental': rental})
@@ -106,6 +140,16 @@ class ReturnBook(LoginRequiredMixin, CustomerMixin, View):
         return redirect("dashboard_client", pk=request.user.id)
     
 class ExtendRentalPeriodView(LoginRequiredMixin, CustomerMixin, View):
+    """
+    Widok umożliwiający przedłużenie okresu wypożyczenia.
+
+        Funkcje:
+        - Pozwala na jednorazowe przedłużenie wypożyczenia o 7 dni
+        - Aktualizuje datę zwrotu
+        - Oznacza wypożyczenie jako przedłużone
+    
+        Wymaga logowania i dostępu klienta.
+    """
     def get(self, request, *args, **kwargs):
         rental = get_object_or_404(BookRental, id=self.kwargs['pk'])
         return render(request, 'extend_rental.html', {'rental': rental})
@@ -122,9 +166,20 @@ class ExtendRentalPeriodView(LoginRequiredMixin, CustomerMixin, View):
         return redirect("dashboard_client", pk=request.user.id)
 
 class ListBooksView(LoginRequiredMixin, ListView):
+    """
+    Widok wyświetlający listę książek.
+
+        Funkcje:
+        - Wyświetla książki z liczbą dostępnych egzemplarzy
+        - Umożliwia wyszukiwanie książek
+        - Umożliwia filtrowanie książek po tytule, autorze lub kategorii
+        
+        Wymaga logowania.
+    """
     model = Book
     template_name = "list_books.html"
     context_object_name = "books"
+    paginate_by = 8
 
     def get_queryset(self) -> QuerySet[Any]:
         queryset = Book.objects.prefetch_related('copies')
@@ -137,7 +192,7 @@ class ListBooksView(LoginRequiredMixin, ListView):
                 Q(category__name__icontains=query)
             )
 
-        return queryset
+        return queryset.order_by('title')
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -149,6 +204,17 @@ class ListBooksView(LoginRequiredMixin, ListView):
         return context
     
 class DetailBookView(LoginRequiredMixin, DetailView):
+    """
+    Widok szczegółów książki.
+
+        Funkcje:
+        - Wyświetla informacje o konkretnej książce
+        - Pokazuje opinie o książce
+        - Umożliwia dodanie własnej opinii, jeżeli mamy lub mieliśmy wypożyczoną tę książkę
+        - Umożliwia włączenie powiadomień
+
+        Wymaga logowania.
+    """
     model = Book
     template_name = 'detail_book.html'
     context_object_name = 'book'
@@ -201,6 +267,15 @@ class DetailBookView(LoginRequiredMixin, DetailView):
         return redirect('detail_book', pk=book.id)
     
 class SubscribeBookView(LoginRequiredMixin, CustomerMixin, View):
+    """
+    Widok obsługujący subskrypcję powiadomień o książce.
+
+        Funkcje:
+        - Włącza powiadomienia o dostępności książki
+        - Zapobiega wielokrotnemu dodaniu powiadomienia
+
+        Wymaga logowania i dostępu klienta.
+    """
     def post(self, request, *args, **kwargs):
         user = self.request.user
         book = get_object_or_404(Book, id=self.kwargs['pk'])
@@ -219,6 +294,17 @@ class SubscribeBookView(LoginRequiredMixin, CustomerMixin, View):
         return redirect('dashboard_client', pk=user.id)
 
 class DashboardEmployeeView(LoginRequiredMixin, EmployeeMixin, DetailView):
+    """
+    Widok pulpitu pracownika.
+
+        Funkcje:
+        - Wyświetla statystyki wypożyczeń
+        - Pokazuje listę użytkowników
+        - Prezentuje najczęściej wypożyczane książki
+        - Wyświetla powiadomienia
+
+        Wymaga logowania i dostępu pracownika.
+    """
     model = CustomUser
     template_name = "dashboard_employee.html"
     context_object_name = "user"
@@ -248,8 +334,17 @@ class DashboardEmployeeView(LoginRequiredMixin, EmployeeMixin, DetailView):
         return context
 
 class AddBookView(LoginRequiredMixin, EmployeeMixin, CreateView):
+    """
+    Widok dodawania nowej książki.
+
+        Funkcje:
+        - Umożliwia wprowadzenie danych nowej książki
+        - Tworzy nowe egzemplarze książki
+
+        Wymaga logowania i dostępu pracownika.
+    """
     template_name = "add_books.html"
-    form_class = forms.BookForm
+    form_class = forms.AddBookForm
     success_url = reverse_lazy('list_books')
 
     def form_valid(self, form):
@@ -260,12 +355,23 @@ class AddBookView(LoginRequiredMixin, EmployeeMixin, CreateView):
             BookCopy(book=book) for _ in range(total_copies)
         ])
 
+        messages.success(self.request, "Pomyślnie dodano książkę")
+
         return super().form_valid(form)
 
 
 class EditBookView(LoginRequiredMixin, EmployeeMixin, UpdateView):
+    """
+    Widok edycji książki.
+
+        Funkcje:
+        - Pozwala modyfikować dane książki
+        - Obsługuje dodawanie i usuwanie egzemplarzy
+
+        Wymaga logowania i dostępu pracownika.
+    """
     model = Book
-    form_class = forms.BookForm
+    form_class = forms.EditBookForm
     template_name = "edit_books.html"
     context_object_name = 'book'
     success_url = reverse_lazy('list_books')
@@ -278,12 +384,31 @@ class EditBookView(LoginRequiredMixin, EmployeeMixin, UpdateView):
         copies_difference = old_total_copies - new_total_copies
 
         if copies_difference > 0:
-            available_copies = BookCopy.objects.filter(
+            available_copies_count = BookCopy.objects.filter(
                 book=book, 
                 is_available=True
-            )[:copies_difference]
+            ).count()
+
+            borrowed_copies_count = BookCopy.objects.filter(
+                book=book, 
+                is_available=False
+            ).count()
+
+            if copies_difference > available_copies_count:
+                messages.error(
+                    self.request, 
+                    f"Nie można usunąć {copies_difference} egzemplarzy. "
+                    f"Dostępnych jest tylko {available_copies_count} egzemplarzy, "
+                    f"a {borrowed_copies_count} jest aktualnie wypożyczonych."
+                )
+                return self.form_invalid(form)
             
-            available_copies.delete()
+            copies_to_delete_pks = BookCopy.objects.filter(
+                book=book, 
+                is_available=True
+            ).values_list('pk', flat=True)[:copies_difference]
+            
+            BookCopy.objects.filter(pk__in=copies_to_delete_pks).delete()
         
         elif copies_difference < 0:
             BookCopy.objects.bulk_create([
@@ -297,6 +422,15 @@ class EditBookView(LoginRequiredMixin, EmployeeMixin, UpdateView):
 
 
 class DeleteBookView(LoginRequiredMixin, EmployeeMixin, View):
+    """
+    Widok usuwania książki.
+
+        Funkcje:
+        - Wyświetla potwierdzenie usunięcia
+        - Usuwa książkę z systemu
+
+        Wymaga logowania i dostępu pracownika.
+    """
     def get(self, request, pk):
         book = Book.objects.get(pk=pk)
         return render(request, 'delete_books.html', {'book': book})
@@ -310,8 +444,18 @@ class DeleteBookView(LoginRequiredMixin, EmployeeMixin, View):
 
 
 class ListBorrowsView(LoginRequiredMixin, EmployeeMixin, ListView):
+    """
+    Widok listy wypożyczeń.
+
+        Funkcje:
+        - Wyświetla wszystkie wypożyczenia
+        - Sortuje wypożyczenia według statusu
+
+        Wymaga logowania i dostępu pracownika.
+    """
     model = BookRental
     template_name = "list_borrows.html"
+    paginate_by = 4
     
     def get_queryset(self):
         status_order = Case(
@@ -328,19 +472,44 @@ class ListBorrowsView(LoginRequiredMixin, EmployeeMixin, ListView):
 
 
 class ListUsersView(LoginRequiredMixin, EmployeeMixin, ListView):
+    """
+    Widok listy użytkowników.
+        
+        Funkcje:
+        - Wyświetla wszystkich użytkowników systemu
+        
+        Wymaga logowania i dostępu pracownika.
+    """
     model = CustomUser
     template_name = "list_users.html"
 
 
 class DetailUserView(LoginRequiredMixin, EmployeeMixin, DetailView):
+    """
+    Widok szczegółów użytkownika.
+
+        Funkcje:
+        - Wyświetla szczegółowe informacje o użytkowniku
+
+        Wymaga logowania i dostępu pracownika.
+    """
     model = CustomUser
     template_name = "detail_user.html"
     context_object_name = 'user'
 
 
 class EditUserView(LoginRequiredMixin, UpdateView):
+    """
+    Widok edycji użytkownika.
+
+        Funkcje:
+        - Umożliwia modyfikację danych użytkownika
+        - Przekierowuje do odpowiedniego pulpitu po zapisie
+
+        Wymaga logowania.
+    """
     model = CustomUser
-    form_class = forms.UserForm
+    form_class = forms.EditUserForm
     template_name = "edit_user.html"
 
     def get_success_url(self):
@@ -349,9 +518,21 @@ class EditUserView(LoginRequiredMixin, UpdateView):
             "dashboard_employee" if user.is_employee else "dashboard_client", 
             kwargs={'pk': user.id}
         )
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Dane zmienione poprawnie.")
+        return super().form_valid(form)
 
 
 class ActiveUserView(LoginRequiredMixin, AdminMixin, View):
+    """
+    Widok zmiany statusu aktywności użytkownika.
+
+        Funkcje:
+        - Włącza/wyłącza konto użytkownika
+
+        Wymaga logowania i dostępu administratora.
+    """
     def post(self, request, pk):
         user = CustomUser.objects.get(pk=pk)
         user.is_active = not user.is_active
@@ -360,6 +541,15 @@ class ActiveUserView(LoginRequiredMixin, AdminMixin, View):
 
 
 class DeleteUserView(LoginRequiredMixin, AdminMixin, View):
+    """
+    Widok usuwania użytkownika.
+
+        Funkcje:
+        - Wyświetla potwierdzenie usunięcia
+        - Usuwa użytkownika z systemu
+
+        Wymaga logowania i dostępu administratora.
+    """
     def get(self, request, pk):
         user = CustomUser.objects.get(pk=pk)
         return render(request, 'delete_user.html', {'user': user})
@@ -373,12 +563,27 @@ class DeleteUserView(LoginRequiredMixin, AdminMixin, View):
 
 
 class AddUserView(LoginRequiredMixin, AdminMixin, CreateView):
+    """
+    Widok dodawania nowego użytkownika.
+
+        Funkcje:
+        - Umożliwia utworzenie nowego konta użytkownika
+
+        Wymaga logowania i dostępu administratora.
+    """
     template_name = "add_user.html"
-    form_class = forms.CustomUserForm
+    form_class = forms.AdminUserForm
     success_url = reverse_lazy('list_users')
 
 
 class CustomPasswordResetView(PasswordResetView):
+    """
+    Widok resetowania hasła.
+
+        Funkcje:
+        - Inicjuje proces resetowania hasła
+        - Wysyła email z instrukcjami
+    """
     template_name = 'password_reset.html' 
     email_template_name = 'password_reset_email.html' 
     success_url = reverse_lazy('password_reset_done')
@@ -395,9 +600,16 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
-    template_name = 'accounts/password_reset_complete.html'
+    template_name = 'password_reset_complete.html'
 
 class UserRegistrationView(SuccessMessageMixin, CreateView):
+    """
+    Widok rejestracji użytkownika.
+
+        Funkcje:
+        - Wyświetla formularz rejestracji
+        - Przekierowuje zalogowanych użytkowników
+    """
     form_class = forms.UserRegistrationForm
     template_name = 'register.html'
     success_message = "Konto zostało utworzone pomyślnie! Możesz się teraz zalogować."
@@ -421,6 +633,14 @@ class UserRegistrationView(SuccessMessageMixin, CreateView):
         return reverse_lazy('login')
 
 class UserLoginView(SuccessMessageMixin, LoginView):
+    """
+    Widok logowania użytkownika.
+
+        Funkcje:
+        - Umożliwia zalogowanie się do systemu
+        - Przekierowuje do odpowiedniego pulpitu
+        - Obsługuje błędy logowania
+    """
     form_class = forms.UserLoginForm
     template_name = 'login.html'
     success_message = "Zostałeś pomyślnie zalogowany!"
@@ -447,6 +667,13 @@ class UserLoginView(SuccessMessageMixin, LoginView):
         return super().dispatch(request, *args, **kwargs)
 
 class UserLogoutView(View):
+    """
+    Widok wylogowania użytkownika.
+
+        Funkcje:
+        - Kończy sesję użytkownika
+        - Przekierowuje do strony logowania
+    """
     def get(self, request):
         logout(request)
         return redirect('login')

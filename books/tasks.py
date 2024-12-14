@@ -9,6 +9,10 @@ from .models import BookRental
 
 @app.task
 def check_overdue_books():
+    '''
+    Sprawdza raz dziennie czy są jakieś przeterminowane książki
+    oraz czy są książki ze zbiliżającym się terminem zwrotu i wysyła maile informacyjne.
+    '''
     today = timezone.now().date()
     week_from_now = today + timedelta(days=7)
     
@@ -69,8 +73,7 @@ def send_upcoming_due_notification(rental):
     Przypominamy, że za tydzień ({rental.due_date}) upływa termin zwrotu książki:
     "{rental.book_copy.book.title}"
     
-    Jeśli potrzebujesz więcej czasu, możesz przedłużyć wypożyczenie w systemie bibliotecznym
-    (o ile książka nie została zarezerwowana przez innego czytelnika).
+    Jeśli potrzebujesz więcej czasu, możesz przedłużyć wypożyczenie w systemie bibliotecznym.
     
     Z poważaniem,
     Zespół Biblioteki
