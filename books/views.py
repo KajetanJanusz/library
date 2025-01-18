@@ -20,11 +20,12 @@ from django.contrib.auth.views import (
 from django.contrib.auth.forms import PasswordResetForm
 from django.core.exceptions import ValidationError
 
-from books.models import Book, BookRental, BookCopy, Category, Notification, Opinion
+from books.models import Badge, Book, BookRental, BookCopy, Category, Notification, Opinion
 from books import forms
 from books.mixins import AdminMixin, CustomerMixin, EmployeeMixin
 from books.models import CustomUser
-from books.helpers import recommend_books_for_user
+from books.helpers import get_five_book_articles, recommend_books_for_user
+from books.ai import get_ai_book_recommendations, get_ai_generated_description
 
 class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
     """
@@ -50,14 +51,37 @@ class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         user = self.get_object()
+        if 'ai_recommendations' in self.request.session:
+            ai_recommendations = self.request.session['ai_recommendations']
+        else:
+            self.request.session['ai_recommendations'] = ai_recommendations = get_ai_book_recommendations(list(BookRental.objects.filter(user=user))) 
         context.update({
-            'rented_books': BookRental.objects.filter(user=user, status='rented'),
+            'rented_books': BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending'))),
             'rented_books_old': BookRental.objects.filter(user=user, status='returned'),
             'notifications': Notification.objects.filter(user=user, is_read=False, is_available=True),
             'opinions': Opinion.objects.filter(user=user),
-            'recommended_books': recommend_books_for_user(user)
+            'recommended_books': recommend_books_for_user(user),
+            'ai_recommendations': ai_recommendations,
+            'badges': Badge.objects.get(user=user)
         })
         return context
+    
+class ArticlesView(LoginRequiredMixin, View):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any):
+        if 'articles' in self.request.session:
+            articles = self.request.session['articles']
+        else:
+            self.request.session['articles'] = articles = get_five_book_articles()
+
+        return render(request, "articles.html", {"articles": articles})
+
+class MarkNotificationAsReadView(LoginRequiredMixin, CustomerMixin, View):
+    def post(self, request, *args, **kwargs):
+        notification = get_object_or_404(Notification, id=self.kwargs.get('pk'))
+
+        notification.is_read = True
+        notification.save()
+        return redirect('dashboard_client', pk=request.user.id)
 
 class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
     """
@@ -77,7 +101,7 @@ class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
         user = request.user
 
         available_copy = BookCopy.objects.select_related('book').filter(book=book, is_available=True).first()
-        user_rentals_count = BookRental.objects.filter(user=user.id, status='rented').count()
+        user_rentals_count = BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending'))).count()
 
         if not available_copy:
             messages.warning(request, "Nie ma wolnych egzemplarzy")
@@ -97,6 +121,25 @@ class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
             rental_date=date.today(),
             status='rented'
         )
+
+        rented_books = BookRental.objects.filter(user=user).count()
+        categories_read = BookRental.objects.filter(user=user).values('book_copy__book__category').distinct().count()
+        if rented_books >= 1 or categories_read >= 3:
+            badge, _ = Badge.objects.get_or_create(user=user)
+
+            if rented_books >= 1 and not badge.first_book:
+                badge.first_book = True
+            elif rented_books >= 10 and not badge.ten_books:
+                badge.ten_books = True
+            elif rented_books >= 20 and not badge.twenty_books:
+                badge.twenty_books = True
+            elif rented_books >= 100 and not badge.hundred_books:
+                badge.hundred_books = True
+
+            if categories_read >= 3:
+                badge.three_categories = True
+
+            badge.save()
 
         messages.success(request, "Książka wypożyczona")
         return redirect('dashboard_client', pk=request.user.id)
@@ -120,23 +163,10 @@ class ReturnBook(LoginRequiredMixin, CustomerMixin, View):
     def post(self, request, *args, **kwargs):
         rental = get_object_or_404(BookRental, id=self.kwargs['pk'])
         
-        rental.status = 'returned'
-        rental.return_date = date.today()
+        rental.status = 'pending'
         rental.save()
-        
-        book_copy = rental.book_copy
-        book_copy.is_available = True
-        book_copy.borrower = None
-        book_copy.save()
 
-        book = rental.book_copy.book
-
-        Notification.objects.filter(book=book.id, is_available=False).update(
-            is_available=True,
-            message=f"Książka {book.title} jest gotowa do wypożyczenia"
-        )
-
-        messages.success(request, "Książka zwrócona")
+        messages.info(request, "Zwrot oczekuje na zatwierdzenie")
         return redirect("dashboard_client", pk=request.user.id)
     
 class ExtendRentalPeriodView(LoginRequiredMixin, CustomerMixin, View):
@@ -218,18 +248,6 @@ class DetailBookView(LoginRequiredMixin, DetailView):
     model = Book
     template_name = 'detail_book.html'
     context_object_name = 'book'
-
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        response = super().get(request, *args, **kwargs)
-        
-        Notification.objects.filter(
-            user=self.request.user, 
-            book=self.get_object(), 
-            is_read=False, 
-            is_available=True
-        ).update(is_read=True)
-            
-        return response
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -328,7 +346,8 @@ class DashboardEmployeeView(LoginRequiredMixin, EmployeeMixin, DetailView):
             'all_users': CustomUser.objects.all(),
             'overdue_rentals': BookRental.objects.filter(status='overdue'),
             'most_rented_books': most_rented_books,
-            'total_rentals': most_rented_books.aggregate(total=Sum('rental_count'))['total'] or 0
+            'total_rentals': most_rented_books.aggregate(total=Sum('rental_count'))['total'] or 0,
+            'returns_to_approve': BookRental.objects.filter(status='pending')
         })
         
         return context
@@ -348,8 +367,14 @@ class AddBookView(LoginRequiredMixin, EmployeeMixin, CreateView):
     success_url = reverse_lazy('list_books')
 
     def form_valid(self, form):
-        book = form.save()
+        book = form.save(commit=False)
         total_copies = form.cleaned_data['total_copies']
+        title = form.cleaned_data['title']
+        author = form.cleaned_data['author']
+
+        ai_description = get_ai_generated_description(title, author)
+        book.description = ai_description
+        book.save()
 
         BookCopy.objects.bulk_create([
             BookCopy(book=book) for _ in range(total_copies)
@@ -441,6 +466,33 @@ class DeleteBookView(LoginRequiredMixin, EmployeeMixin, View):
 
         messages.success(request, "Książka usunięta")
         return redirect("dashboard_client", pk=request.user.id)
+
+class ApproveReturnView(LoginRequiredMixin, EmployeeMixin, View):
+    def post(self, request, *args, **kwargs):
+        rental = get_object_or_404(BookRental, id=self.kwargs['pk'])
+        
+        rental.status = 'returned'
+        rental.return_date = date.today()
+        rental.save()
+        
+        book_copy = rental.book_copy
+        book_copy.is_available = True
+        book_copy.borrower = None
+        book_copy.save()
+
+        book = rental.book_copy.book
+
+        Notification.objects.filter(book=book.id, is_available=False).update(
+            is_available=True,
+            message=f"Książka {book.title} jest gotowa do wypożyczenia"
+        )
+
+        Notification.objects.create(user=rental.user, book=book, is_available=True,
+            message=f"Zwrot książki {book.title} został zatwierdzony"
+        )
+
+        messages.success(request, "Zwrot przetworzony")
+        return redirect("dashboard_employee", pk=request.user.id)
 
 
 class ListBorrowsView(LoginRequiredMixin, EmployeeMixin, ListView):

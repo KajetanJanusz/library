@@ -128,6 +128,7 @@
             {% if request.user.is_authenticated and not request.user.is_employee %}
                 <li><a href="{% url 'list_books' %}">Książki</a></li>
                 <li><a href="{% url 'dashboard_client' user.id %}">Dashboard</a></li>
+                <li><a href="{% url 'articles' %}">Artykuły</a></li>
                 <li><a href="{% url 'logout' %}">Wyloguj</a></li>
             {% elif request.user.is_authenticated and request.user.is_employee %}
                 <li><a href="{% url 'list_books' %}">Książki</a></li>

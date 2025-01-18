@@ -3,15 +3,21 @@ from django.urls import path
 
 from books import views
 
+import requests
+from bs4 import BeautifulSoup
+
 
 urlpatterns = [
      path('', views.UserLoginView.as_view(), name='login'),
      path('register/', views.UserRegistrationView.as_view(), name='register'),
      path('logout/', views.UserLogoutView.as_view(), name='logout'),
      path('dashboard/client/<int:pk>', views.DashboardClient.as_view(), name='dashboard_client'),
+     path('articles/', views.ArticlesView.as_view(), name='articles'),
      path('<int:pk>/borrow/', views.BorrowBook.as_view(), name='borrow_book'),
      path('<int:pk>/return/', views.ReturnBook.as_view(), name='return_book'),
      path('<int:pk>/extend/', views.ExtendRentalPeriodView.as_view(), name='extend_book'),
+     path('<int:pk>/approve_return/', views.ApproveReturnView.as_view(), name='approve_return'),
+     path('<int:pk>/mark_as_read/', views.MarkNotificationAsReadView.as_view(), name='mark_as_read'),
 
      path('books/', views.ListBooksView.as_view(), name='list_books'),
      path('<int:pk>', views.DetailBookView.as_view(), name='detail_book'),

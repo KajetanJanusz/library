@@ -171,7 +171,6 @@
                 {% endif %}
             </div>
         
-            <!-- Przeterminowane Wypożyczenia -->
             <div class="dashboard-section">
                 <h2>Przeterminowane Wypożyczenia</h2>
                 {% if overdue_rentals %}
@@ -190,7 +189,28 @@
                 {% endif %}
             </div>
 
-            <!-- Aktualne Wypożyczenia -->
+            <div class="dashboard-section">
+                <h2>Zwroty do zatwierdzenia</h2>
+                {% if returns_to_approve %}
+                <ul class="dashboard-list returns-to-approve-list">
+                    {% for return in returns_to_approve %}
+                    <li>
+                        <strong>Książka:</strong> {{ return.book_copy.book.title }}<br>
+                        <strong>Wypożyczający:</strong> {{ return.user.first_name }} {{ return.user.last_name }}<br>
+                        <div class="dashboard-form-buttons">
+                            <form action="{% url 'approve_return' pk=return.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit">Zatwierdź</button>
+                            </form>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="dashboard-empty-state">Brak zwrotów do zatwierdzenia.</p>
+                {% endif %}
+            </div>
+
             <div class="dashboard-section">
                 <h2>Aktualne Wypożyczenia</h2>
                 {% if rented_books %}
@@ -296,6 +316,7 @@
             addExpandButton('.current-rentals-list', 'Pokaż więcej aktualnych wypożyczeń');
             addExpandButton('.admin-rentals-list', 'Pokaż więcej wypożyczeń');
             addExpandButton('.most-rented-books-list', 'Pokaż więcej książek');
+            addExpandButton('.returns-to-approve-list', 'Pokaż więcej zwrotów');
         });
     </script>
 </body>

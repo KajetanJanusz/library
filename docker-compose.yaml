@@ -8,6 +8,8 @@ services:
     volumes:
       - .:/app
     depends_on:
+      redis:
+        condition: service_started
       db:
         condition: service_healthy
 
@@ -24,6 +26,29 @@ services:
       interval: 3s
       timeout: 5s
       retries: 5
+
+  celery-worker:
+    build:
+      context: .
+    command: celery -A library worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+
+  celery-beat:
+    build:
+      context: .
+    command: celery -A library beat --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - "6379:6379"
 
 volumes:
   postgres_data:

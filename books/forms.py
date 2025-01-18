@@ -12,18 +12,16 @@ from books.models import CustomUser
 class AddBookForm(ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies', 'description']
+        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies']
         labels = {
             'title': 'Tytuł',
             'author': 'Autor',
             'category': 'Kategoria',
             'published_date': 'Data publikacji',
             'isbn': 'Numer ISBN',
-            'total_copies': 'Całkowita liczba kopii',
-            'description': 'Opis'
+            'total_copies': 'Całkowita liczba kopii'
         }
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
             'published_date': forms.DateInput(attrs={'type': 'date'})
         }
 

@@ -142,7 +142,52 @@
             grid-template-columns: 1fr;
         }
     }
+    .badges-list {
+        display: flex;
+        list-style-type: none;
+        padding-top: 30px;
+        margin: 0;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .badge-item {
+        flex: 1;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .badge-item i {
+        font-size: 50px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        width: 100%;
+        text-align: center;
+    }
+
+    .badge-item i:hover {
+        color: #007bff;
+    }
+
+    .badge-active {
+        color: inherit;
+        opacity: 1;
+    }
+
+    .badge-inactive {
+        color: gray;
+        opacity: 0.5;
+    }
+
+    .badge-item i[title] {
+        position: relative;
+    }
+
 </style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 <div class="dashboard-container">
@@ -166,14 +211,44 @@
                 </form>
             </div>
             {% endif %}
+            <ul class="badges-list">
+                <li class="badge-item">
+                    <i class="fas fa-book-open {% if badges.first_book %}badge-active{% else %}badge-inactive{% endif %}" 
+                       title="Pierwsza książka: Otrzymujesz ją po wypożyczeniu pierwszej książki."></i>
+                </li>
+                <li class="badge-item">
+                    <i class="fas fa-book {% if badges.ten_books %}badge-active{% else %}badge-inactive{% endif %}" 
+                       title="10 książek: Otrzymujesz ją po przeczytaniu 10 książek."></i>
+                </li>
+                <li class="badge-item">
+                    <i class="fas fa-book-reader {% if badges.twenty_books %}badge-active{% else %}badge-inactive{% endif %}" 
+                       title="20 książek: Otrzymujesz ją po przeczytaniu 20 książek."></i>
+                </li>
+                <li class="badge-item">
+                    <i class="fas fa-book-dead {% if badges.hundred_books %}badge-active{% else %}badge-inactive{% endif %}" 
+                       title="100 książek: Otrzymujesz ją po przeczytaniu 100 książek."></i>
+                </li>
+                <li class="badge-item">
+                    <i class="fas fa-layer-group {% if badges.three_categories %}badge-active{% else %}badge-inactive{% endif %}" 
+                       title="3 kategorie: Otrzymujesz ją po przeczytaniu książek z trzech różnych kategorii."></i>
+                </li>
+            </ul>
         </div>
 
         <div class="dashboard-section">
             <h2>Powiadomienia</h2>
             {% if notifications %}
-            <ul class="dashboard-list">
+            <ul class="dashboard-list notifications-list collapsed">
                 {% for notification in notifications %}
-                <li>{{ notification.message }}</li>
+                <li style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>{{ notification.message }}</span>
+                    <form action="{% url 'mark_as_read' pk=notification.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" style="background: none; border: none; cursor: pointer;">
+                            <i class="fas fa-check-circle" style="color: green; font-size: 24px;"></i>
+                        </button>
+                    </form>
+                </li>
                 {% endfor %}
             </ul>
             {% else %}
@@ -198,7 +273,7 @@
                             <button type="submit">Zwrot</button>
                         </form>
                         {% endif %}
-                        {% if not rental.is_extended %}
+                        {% if not rental.is_extended and rental.status != 'pending' %}
                         <form action="{% url 'extend_book' pk=rental.id %}" method="post" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit">Przedłużenie</button>
@@ -230,12 +305,14 @@
             {% endif %}
         </div>
 
-        {% if recommended_books %}
+        {% if ai_recommendations %}
         <div class="dashboard-section">
-            <h2>Rekomendacje</h2>
-            <ul class="dashboard-list">
-                {% for book in recommended_books %}
-                <li>{{ book.title }} - Kategoria: {{ book.category.name }}</li>
+            <h2>Rekomendacje AI</h2>
+            <ul class="dashboard-list rental-history-list collapsed">
+                {% for recommendation in ai_recommendations %}
+                <ul class="dashboard-list">
+                    <li>{{ recommendation }}</li>
+                </ul>
                 {% endfor %}
             </ul>
         </div>
@@ -293,6 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     addExpandButton('.opinions-list', 'Pokaż wszystkie opinie');
     addExpandButton('.rental-history-list', 'Pokaż pełną historię wypożyczeń');
+    addExpandButton('.notifications-list', 'Pokaż wszystkie powiadomienia');
 });
 </script>
 </body>

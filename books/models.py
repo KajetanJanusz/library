@@ -34,6 +34,17 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
     
+class Badge(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="badges")
+    first_book = models.BooleanField(default=False)
+    ten_books = models.BooleanField(default=False)
+    twenty_books = models.BooleanField(default=False)
+    hundred_books = models.BooleanField(default=False)
+    three_categories = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}'s badges"
+    
 class BookCopy(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="copies")
     is_available = models.BooleanField(default=True)
@@ -54,10 +65,10 @@ class BookRental(models.Model):
         ('rented', 'Wypożyczona'),
         ('returned', 'Zwrócona'),
         ('overdue', 'Po terminie'),
+        ('pending', 'Zwrot oczekuje na zatwierdzenie')
     ]
     status = models.CharField(max_length=10, choices=status_choices, default='rented')
     fine = models.DecimalField(blank=True, null=True, decimal_places=2, max_digits=5)
-
 
     def __str__(self):
         return f"{self.user.username} rented {self.book_copy.book.title}, id {self.book_copy.book.id}"
