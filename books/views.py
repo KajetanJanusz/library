@@ -24,7 +24,7 @@ from books.models import Badge, Book, BookRental, BookCopy, Category, Notificati
 from books import forms
 from books.mixins import AdminMixin, CustomerMixin, EmployeeMixin
 from books.models import CustomUser
-from books.helpers import get_five_book_articles, recommend_books_for_user
+from books.helpers import get_five_book_articles
 from books.ai import get_ai_book_recommendations, get_ai_generated_description
 
 class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
@@ -56,13 +56,19 @@ class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
         else:
             self.request.session['ai_recommendations'] = ai_recommendations = get_ai_book_recommendations(list(BookRental.objects.filter(user=user))) 
         context.update({
-            'rented_books': BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending'))),
+            'rented_books': BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending') | Q(status='overdue'))),
             'rented_books_old': BookRental.objects.filter(user=user, status='returned'),
             'notifications': Notification.objects.filter(user=user, is_read=False, is_available=True),
             'opinions': Opinion.objects.filter(user=user),
-            'recommended_books': recommend_books_for_user(user),
             'ai_recommendations': ai_recommendations,
-            'badges': Badge.objects.get(user=user)
+            'badges': Badge.objects.get(user=user),
+            'avarage_user_rents': BookRental.objects.exclude(user=user).count()/(CustomUser.objects.exclude(id=self.request.user.id)).count(),
+            'all_my_rents': BookRental.objects.filter(user=user).count(),
+            'books_in_categories': BookRental.objects\
+                                    .filter(user=user)\
+                                    .values('book_copy__book__category__name')\
+                                    .annotate(count=Count('book_copy__book__category'))\
+                                    .order_by('book_copy__book__category__name')
         })
         return context
     

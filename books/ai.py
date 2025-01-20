@@ -1,8 +1,11 @@
-import google.generativeai as genai
+import requests
+import google.generativeai as genai_text
+import requests
+from django.core.files.base import ContentFile
 import re
 
-genai.configure(api_key="AIzaSyDbJ3KSu9oQo8KrkwP0wyNJSZv2iMiKxXg")
-model = genai.GenerativeModel("gemini-1.5-flash")
+genai_text.configure(api_key="AIzaSyDbJ3KSu9oQo8KrkwP0wyNJSZv2iMiKxXg")
+model = genai_text.GenerativeModel("gemini-1.5-flash")
 
 
 def get_ai_book_recommendations(book_list):
@@ -36,4 +39,19 @@ def get_ai_generated_description(title, author):
     except Exception as e:
         return f"Wystąpił błąd podczas komunikacji z Gemini: {e}"
 
+def generate_and_save_image(title, author):
+    prompt = f"cover-of-{title.replace(" ", "-")}-by-{author.replace(" ", "-")}"
+    url = "https://image.pollinations.ai/prompt/" + prompt
+
+    try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+
+        file_name = f"{title.replace(' ', '_')}_cover.jpg"
+        image_content = ContentFile(response.content)
+
+        return file_name, image_content
+    except requests.RequestException as e:
+        print(f"Error generating image for book {title}: {e}")
+        return None
     

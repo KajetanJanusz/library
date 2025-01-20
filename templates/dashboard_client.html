@@ -185,9 +185,34 @@
         position: relative;
     }
 
+    .chart-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        padding: 20px;
+    }
+    
+    .chart-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin: 10px;
+        width: 45%;
+        min-width: 300px;
+    }
+    
+    .chart-card h3 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="dashboard-container">
@@ -319,6 +344,18 @@
         {% endif %}
 
         <div class="dashboard-section">
+            <h2>Statystyki</h2>
+            <div class="chart-card">
+                <h3>Porównanie wypożyczeń</h3>
+                <canvas id="rentalsChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Książki według kategorii</h3>
+                <canvas id="categoriesChart"></canvas>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
             <h2>Historia Wypożyczeń</h2>
             {% if rented_books_old %}
             <ul class="dashboard-list rental-history-list collapsed">
@@ -372,6 +409,45 @@ document.addEventListener('DOMContentLoaded', function() {
     addExpandButton('.rental-history-list', 'Pokaż pełną historię wypożyczeń');
     addExpandButton('.notifications-list', 'Pokaż wszystkie powiadomienia');
 });
+    new Chart(document.getElementById('rentalsChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Twoje wypożyczenia', 'Średnia użytkowników'],
+            datasets: [{
+                label: 'Liczba wypożyczeń',
+                data: [{{ all_my_rents }}, {{ avarage_user_rents }}],
+                backgroundColor: ['#3498db', '#2ecc71']
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Wykres kategorii
+    new Chart(document.getElementById('categoriesChart'), {
+        type: 'pie',
+        data: {
+            labels: [{% for category in books_in_categories %}'{{ category.book_copy__book__category__name }}',{% endfor %}],
+            datasets: [{
+                data: [{% for category in books_in_categories %}{{ category.count }},{% endfor %}],
+                backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f1c40f', '#9b59b6', '#1abc9c']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
 </script>
 </body>
 

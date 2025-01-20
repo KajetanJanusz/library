@@ -1,13 +1,14 @@
 from django.contrib import admin
-from django.urls import path
-
+from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 from books import views
-
-import requests
-from bs4 import BeautifulSoup
+from books.models import CustomUser, Book
 
 
 urlpatterns = [
+     path('qr_code/', include('qr_code.urls', namespace='qr_code')),
+     
      path('', views.UserLoginView.as_view(), name='login'),
      path('register/', views.UserRegistrationView.as_view(), name='register'),
      path('logout/', views.UserLogoutView.as_view(), name='logout'),
@@ -51,3 +52,5 @@ urlpatterns = [
           views.CustomPasswordResetCompleteView.as_view(), 
           name='password_reset_complete'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

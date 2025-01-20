@@ -5,133 +5,127 @@
     :root {
         --primary-color: #4a90e2;
         --secondary-color: #2ecc71;
-        --background-color: #f4f6f9;
+        --background-color: #f9f9fb;
         --text-color: #333;
         --card-background: #ffffff;
         --hover-color: #357abd;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
+        --shadow-color: rgba(0, 0, 0, 0.1);
     }
 
     body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
+        font-family: 'Arial', sans-serif;
+        line-height: 1.5;
         background-color: var(--background-color);
         color: var(--text-color);
+        margin: 0;
+        padding: 0;
     }
 
     .book-detail-container {
-        max-width: 1200px;
+        max-width: 1100px;
         margin: 2rem auto;
-        padding: 1rem;
+        padding: 1.5rem;
         display: grid;
         grid-template-columns: 2fr 1fr;
         gap: 2rem;
     }
 
-    .book-main-details {
+    .book-left-column,
+    .book-side-details {
         background-color: var(--card-background);
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px var(--shadow-color);
+        padding: 1.5rem;
     }
 
-    .book-main-details h1 {
+    .book-image-container h1,
+    .book-main-details h1,
+    .book-side-details h2 {
         color: var(--primary-color);
+        margin-bottom: 1rem;
         border-bottom: 2px solid var(--primary-color);
         padding-bottom: 0.5rem;
-        margin-bottom: 1.5rem;
+    }
+
+    .book-cover-image {
+        max-width: 40%;
+        height: auto;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .no-image-placeholder {
+        text-align: center;
+        color: var(--text-color);
+        font-style: italic;
+        padding: 2rem;
+        border: 1px dashed var(--primary-color);
+        border-radius: 8px;
     }
 
     .book-details-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 1rem;
+        margin-top: 1rem;
     }
 
     .book-details-grid p {
-        background-color: var(--background-color);
         padding: 0.75rem;
         border-radius: 6px;
+        background-color: var(--background-color);
     }
 
     .book-description {
-        grid-column: 1 / -1;
+        grid-column: span 2;
     }
 
     .book-actions {
         display: flex;
         gap: 1rem;
         margin-top: 1.5rem;
+        flex-wrap: wrap;
     }
 
     .book-actions button {
         background-color: var(--primary-color);
         color: white;
         border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        font-size: 1rem;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s;
     }
 
     .book-actions button:hover {
         background-color: var(--hover-color);
     }
 
-    .add-comment-form button {
-        background-color: var(--primary-color);
-        color: white;
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .add-comment-form button:hover {
-        background-color: var(--hover-color);
-    }
-
-    .book-side-details {
-        background-color: var(--card-background);
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
-    }
-
-    .book-side-details h2 {
-        color: var(--primary-color);
-        border-bottom: 2px solid var(--primary-color);
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
     .comments-list {
-        list-style-type: none;
+        list-style: none;
+        padding: 0;
+        margin: 0;
     }
 
     .comments-list li {
         background-color: var(--background-color);
-        margin-bottom: 1rem;
         padding: 1rem;
         border-radius: 6px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px var(--shadow-color);
     }
 
     .comment-rating {
-        color: #f39c12;
+        color: var(--secondary-color);
         font-weight: bold;
     }
 
     .add-comment-form {
+        margin-top: 1.5rem;
         background-color: var(--card-background);
         padding: 1.5rem;
-        border-radius: 10px;
-        margin-top: 1.5rem;
+        border-radius: 8px;
     }
 
     .add-comment-form h3 {
@@ -139,25 +133,39 @@
         margin-bottom: 1rem;
     }
 
-    .add-comment-form form p {
-        margin-bottom: 1rem;
-    }
-
-    .add-comment-form input, 
+    .add-comment-form input,
     .add-comment-form textarea {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
         border: 1px solid var(--primary-color);
-        border-radius: 4px;
+        border-radius: 6px;
+        font-size: 1rem;
+    }
+
+    .add-comment-form button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+
+    .add-comment-form button:hover {
+        background-color: var(--hover-color);
     }
 
     .back-link {
         display: block;
-        text-align: center;
         margin-top: 2rem;
-        color: var(--primary-color);
+        text-align: center;
         text-decoration: none;
-        transition: color 0.3s ease;
+        color: var(--primary-color);
+        font-weight: bold;
+        transition: color 0.3s;
     }
 
     .back-link:hover {
@@ -168,75 +176,93 @@
         .book-detail-container {
             grid-template-columns: 1fr;
         }
+
+        .back-link {
+            margin-top: 1rem;
+            width: 100%;
+        }
     }
 </style>
+
 <div class="book-detail-container">
-    <div class="book-main-details">
-        <h1>{{ book.title }}</h1>
-        <div class="book-details-grid">
-            <p><strong>Autor:</strong> {{ book.author }}</p>
-            <p><strong>Kategoria:</strong> {{ book.category.name }}</p>
-            <p><strong>Data publikacji:</strong> {{ book.published_date }}</p>
-            <p><strong>ISBN:</strong> {{ book.isbn }}</p>
-            <p class="book-description"><strong>Opis:</strong> {{ book.description|default:"Brak opisu" }}</p>
-            <p><strong>Liczba wszystkich kopii:</strong> {{ copies.count }}</p>
-            <p><strong>Liczba dostępnych kopii:</strong> {{ available_copies }}</p>
+    <div class="book-left-column">
+
+
+        <div class="book-main-details">
+            <div class="book-image-container">
+                <h1>{{ book.title }}</h1>
+                {% if book.ai_image %}
+                    <img src="{{ book.ai_image.url }}" alt="Okładka książki {{ book.title }}" class="book-cover-image">
+                {% else %}
+                    <div class="no-image-placeholder">
+                        Brak dostępnego obrazu okładki
+                    </div>
+                {% endif %}
+            </div>
+            <div class="book-details-grid">
+                <p><strong>Autor:</strong> {{ book.author }}</p>
+                <p><strong>Kategoria:</strong> {{ book.category.name }}</p>
+                <p><strong>Data publikacji:</strong> {{ book.published_date }}</p>
+                <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+                <p class="book-description"><strong>Opis:</strong> {{ book.description|default:"Brak opisu" }}</p>
+                <p><strong>Liczba wszystkich kopii:</strong> {{ copies.count }}</p>
+                <p><strong>Liczba dostępnych kopii:</strong> {{ available_copies }}</p>
+            </div>
+            <div class="book-actions">
+                {% if copies_available == False and not request.user.is_employee %}
+                <form method="post" action="{% url 'subscribe_book' pk=book.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Subskrybuj powiadomienia</button>
+                </form>
+                {% endif %}
+
+                {% if copies_available == True and not request.user.is_employee or request.user.is_admin %}
+                <form method="post" action="{% url 'borrow_book' pk=book.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Wypożycz książkę</button>
+                </form>
+                {% endif %}
+
+                {% if request.user.is_employee %}
+                <form method="get" action="{% url 'edit_book' pk=book.id %}">
+                    <button type="submit">Edytuj książkę</button>
+                </form>
+                <form method="get" action="{% url 'delete_book' pk=book.id %}">
+                    <button type="submit">Usuń książkę</button>
+                </form>
+                {% endif %}
+            </div>
         </div>
-    <div class="book-actions">
-        {% if copies_available == False and not request.user.is_employee %}
-        <form method="post" action="{% url 'subscribe_book' pk=book.id %}">
-            {% csrf_token %}
-            <button type="submit">Subskrybuj powiadomienia</button>
-        </form>
-        {% endif %}
-
-        {% if copies_available == True and not request.user.is_employee or request.user.is_admin %}
-        <form method="post" action="{% url 'borrow_book' pk=book.id %}">
-            {% csrf_token %}
-            <button type="submit">Wypożycz książkę</button>
-        </form>
-        {% endif %}
-        
-        {% if request.user.is_employee %}
-        <form method="get" action="{% url 'edit_book' pk=book.id %}">
-            {% csrf_token %}
-            <button type="submit">Edytuj książkę</button>
-        </form>
-        <form method="get" action="{% url 'delete_book' pk=book.id %}">
-            {% csrf_token %}
-            <button type="submit">Usuń książkę</button>
-        </form>
-        {% endif %}
     </div>
-</div>
 
-<div class="book-side-details">
-    <h2>Komentarze</h2>
-    {% if opinions %}
+    <div class="book-side-details">
+        <h2>Komentarze</h2>
+        {% if opinions %}
         <ul class="comments-list">
             {% for opinion in opinions %}
-                <li>
-                    <strong>{{ opinion.user.email }}</strong> ({{ opinion.created_at|date:"d-m-Y" }}): 
-                    <span class="comment-rating">Ocena: {{ opinion.rate }}/5</span><br>
-                    {{ opinion.comment }}
-                </li>
+            <li>
+                <strong>{{ opinion.user.email }}</strong> ({{ opinion.created_at|date:"d-m-Y" }}): 
+                <span class="comment-rating">Ocena: {{ opinion.rate }}/5</span><br>
+                {{ opinion.comment }}
+            </li>
             {% endfor %}
         </ul>
-    {% else %}
+        {% else %}
         <p>Brak komentarzy</p>
-    {% endif %}
+        {% endif %}
 
-    {% if comment_form %}
-    <div class="add-comment-form">
-        <h3>Dodaj komentarz</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ comment_form.as_p }}
-            <button type="submit">Dodaj komentarz</button>
-        </form>
+        {% if comment_form %}
+        <div class="add-comment-form">
+            <h3>Dodaj komentarz</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit">Dodaj komentarz</button>
+            </form>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
-</div>
+
 <a href="{% url 'list_books' %}" class="back-link">Powrót do listy książek</a>
 {% endblock %}

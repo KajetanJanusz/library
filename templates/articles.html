@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load qr_tags %}
+{% load qr_code %}
 {% block title %}Najciekawsze artykuły{% endblock %}
 {% block content %}
 <style>
@@ -126,7 +126,7 @@
                     <td>{{ article.source }}</td>
                     <td><a href="{{ article.link }}">{{ article.title }}</a></td>
                     <td>{{ article.description }}</td>
-                    <td><img src="{% qr_from_text article.link size=200 %}" alt="QR Code"></td>
+                    <td><img src="{% qr_url_from_text article.link size='T' %}"></td>
                 </tr>
             {% empty %}
                 <tr>
