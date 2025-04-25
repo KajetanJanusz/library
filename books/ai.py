@@ -9,6 +9,9 @@ model = genai_text.GenerativeModel("gemini-1.5-flash")
 
 
 def get_ai_book_recommendations(book_list):
+    if len(book_list) < 3:
+        return ["Musisz przeczytać więcej niż 3 książki, aby otrzymać rekomendacje AI."]
+    
     prompt = (
         "Mam bibliotekę z następującymi książkami: \n"
         + "\n".join(f"- {book}" for book in book_list)
@@ -28,7 +31,7 @@ def get_ai_book_recommendations(book_list):
 
         return [propozycja_1, propozycja_2, propozycja_3]
     except Exception as e:
-        return f"Wystąpił błąd podczas komunikacji z Gemini: {e}"
+        return ["Rekomendacje AI są w tym momencie niedostępne, z powodów połączenia z serwerem", "Spróbuj ponownie później.", "Przepraszamy!"]
 
 def get_ai_generated_description(title, author):
     prompt = f"Wygeneruj krótki 3 zdaniowy opis książki {title} autora {author}"

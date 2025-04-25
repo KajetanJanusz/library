@@ -151,7 +151,6 @@
     <div class="dashboard-container">
         <h1 style="text-align: center; color: var(--primary-color); margin-bottom: 2rem;">Witaj, {{ user.username }}!</h1>
         <div class="dashboard-grid">
-            <!-- Lista Klientów -->
             <div class="dashboard-section">
                 <h2>Twoje dane</h2>
                 <ul class="dashboard-list user-data-list">
@@ -264,7 +263,6 @@
             </div>
             {% endif %}
 
-            <!-- Najczęściej wypożyczane książki (Admin) -->
             {% if request.user.is_admin %}
             <div class="dashboard-section">
                 <h2>Najczęściej wypożyczane książki</h2>
@@ -311,7 +309,6 @@
                 }
             }
         
-            // Add expand buttons to different lists
             addExpandButton('.overdue-rentals-list', 'Pokaż więcej przeterminowanych');
             addExpandButton('.current-rentals-list', 'Pokaż więcej aktualnych wypożyczeń');
             addExpandButton('.admin-rentals-list', 'Pokaż więcej wypożyczeń');
