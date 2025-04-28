@@ -79,18 +79,18 @@ WSGI_APPLICATION = 'library.wsgi.application'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = False
+EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'biblioteka.testowanie1@gmail.com'
-EMAIL_HOST_PASSWORD = 'jcie hcwd nysh aaes'
+EMAIL_HOST_USER = 'test.biblioteki1@gmail.com'
+EMAIL_HOST_PASSWORD = 'swky urfb bjnx ynut'
 
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
 
 CELERY_BEAT_SCHEDULE = {
-    "sample_task": {
-        "task": "core.tasks.sample_task",
-        "schedule": crontab(minute="*/1"),
+    "check_overdue_books_task": {
+        "task": "books.tasks.check_overdue_books",
+        "schedule": crontab(minute="*"),
     },
 }
 

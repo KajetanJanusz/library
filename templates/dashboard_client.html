@@ -292,13 +292,13 @@
                     <strong>Data wypożyczenia:</strong> {{ rental.rental_date }}<br>
                     <strong>Termin zwrotu:</strong> {{ rental.due_date }}<br>
                     <div class="dashboard-form-buttons">
-                        {% if rental.status == 'rented' %}
+                        {% if rental.status == 'rented' or rental.status == 'overdue'%}
                         <form action="{% url 'return_book' pk=rental.id %}" method="post" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit">Zwrot</button>
                         </form>
                         {% endif %}
-                        {% if not rental.is_extended and rental.status != 'pending' %}
+                        {% if not rental.is_extended and rental.status != 'pending' and rental.status != 'overdue' %}
                         <form action="{% url 'extend_book' pk=rental.id %}" method="post" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit">Przedłużenie</button>

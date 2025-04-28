@@ -30,7 +30,7 @@ services:
   celery-worker:
     build:
       context: .
-    command: celery -A library worker --loglevel=info
+    entrypoint: ["celery", "-A", "library", "worker", "-l", "debug"]
     volumes:
       - .:/app
     depends_on:
@@ -39,7 +39,7 @@ services:
   celery-beat:
     build:
       context: .
-    command: celery -A library beat --loglevel=info
+    entrypoint: ["celery", "-A", "library", "beat", "-l", "debug"]
     volumes:
       - .:/app
     depends_on:
