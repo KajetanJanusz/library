@@ -12,14 +12,14 @@ from books.models import CustomUser
 class AddBookForm(ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies']
+        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies', 'ai_image']
         labels = {
             'title': 'Tytuł',
             'author': 'Autor',
             'category': 'Kategoria',
             'published_date': 'Data publikacji',
             'isbn': 'Numer ISBN',
-            'total_copies': 'Całkowita liczba kopii'
+            'total_copies': 'Całkowita liczba kopii',
         }
         widgets = {
             'published_date': forms.DateInput(attrs={'type': 'date'})
@@ -122,3 +122,15 @@ class UserRegistrationForm(UserCreationForm):
 class UserLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    
+class ConfirmDescriptionForm(forms.Form):
+    description = forms.CharField(
+        label="Opis książki",
+        widget=forms.Textarea(attrs={
+            'rows': 8,
+            'cols': 50,
+            'class': 'form-control',
+            'placeholder': 'Edytuj opis książki...'
+        }),
+        help_text="Możesz edytować wygenerowany opis przed zapisaniem książki."
+    )

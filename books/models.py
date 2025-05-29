@@ -4,8 +4,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import MaxValueValidator
 
-from books.ai import generate_and_save_image
-
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -22,23 +20,9 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, unique=True)
     description = models.TextField(blank=True, null=True)
     total_copies = models.PositiveIntegerField(blank=False, null=False)
-    ai_image = models.ImageField(upload_to='book_covers/', null=True, blank=True)
 
     def __str__(self):
         return self.title
-    
-    def save(self, *args, **kwargs):
-        if not self.ai_image:
-            result = generate_and_save_image(
-                self.title,
-                self.author
-            )
-            if result:
-                file_name, image_content = result
-                if file_name and image_content:
-                    self.ai_image.save(file_name, image_content, save=False)
-        super().save(*args, **kwargs)
-
 
 class CustomUser(AbstractUser):
     phone = models.CharField(max_length=15, null=True, blank=True)

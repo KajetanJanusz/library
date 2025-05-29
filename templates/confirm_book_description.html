@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    :root {
+        --primary-color: #4a90e2;
+        --secondary-color: #2ecc71;
+        --background-color: #f4f6f9;
+        --text-color: #333;
+        --card-background: #ffffff;
+        --hover-color: #357abd;
+        --success-color: #27ae60;
+        --warning-color: #f39c12;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+
+    .book-add-container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 1rem;
+    }
+
+    .book-add-section {
+        background-color: var(--card-background);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        transition: transform 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .book-add-section:hover {
+        transform: translateY(-2px);
+    }
+
+    .book-add-section h2, .book-add-section h3 {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .progress-steps {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        color: var(--success-color);
+    }
+
+    .step.active {
+        color: var(--primary-color);
+        font-weight: bold;
+    }
+
+    .step-number {
+        background-color: var(--success-color);
+        color: white;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0.5rem;
+    }
+
+    .step.active .step-number {
+        background-color: var(--primary-color);
+    }
+
+    .step-separator {
+        margin: 0 1rem;
+        color: var(--success-color);
+    }
+
+    .book-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid var(--secondary-color);
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .summary-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .summary-label {
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .summary-value {
+        background-color: white;
+        padding: 0.5rem;
+        border-radius: 4px;
+        border: 1px solid #e9ecef;
+    }
+
+    .description-form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .description-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .description-form textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        background-color: var(--background-color);
+        transition: border-color 0.3s ease;
+        font-family: inherit;
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 200px;
+    }
+
+    .description-form textarea:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .btn-success {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #229954;
+        transform: translateY(-2px);
+    }
+
+    .btn-warning {
+        background-color: var(--warning-color);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: #e67e22;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+        transform: translateY(-2px);
+    }
+
+    .description-form .helptext {
+        font-size: 0.9rem;
+        color: rgba(0, 0, 0, 0.6);
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+
+    .description-form .errorlist {
+        color: #e74c3c;
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-box {
+        background-color: #e8f5e8;
+        border-left: 4px solid var(--secondary-color);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+    }
+
+    .info-box h4 {
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .ai-badge {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .form-buttons {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+        
+        .summary-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="book-add-container">
+    <div class="book-add-section">
+        <div class="progress-steps">
+            <div class="step">
+                <div class="step-number">✓</div>
+                <span>Dane książki</span>
+            </div>
+            <div class="step-separator">→</div>
+            <div class="step active">
+                <div class="step-number">2</div>
+                <span>Opis AI</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="book-add-section">
+        <h3>Podsumowanie danych książki</h3>
+        
+        <div class="book-summary">
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Tytuł:</span>
+                    <span class="summary-value">{{ book_data.title }}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Autor:</span>
+                    <span class="summary-value">{{ book_data.author }}</span>
+                </div>
+                {% if book_data.isbn %}
+                <div class="summary-item">
+                    <span class="summary-label">ISBN:</span>
+                    <span class="summary-value">{{ book_data.isbn }}</span>
+                </div>
+                {% endif %}
+                {% if book_data.published_date %}
+                <div class="summary-item">
+                    <span class="summary-label">Data publikacji:</span>
+                    <span class="summary-value">{{ book_data.published_date }}</span>
+                </div>
+                {% endif %}
+                <div class="summary-item">
+                    <span class="summary-label">Liczba egzemplarzy:</span>
+                    <span class="summary-value">{{ book_data.total_copies }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="book-add-section">
+        <h3>Edycja opisu książki <span class="ai-badge">Wygenerowane przez AI</span></h3>
+        
+        <div class="info-box">
+            <h4>Krok 2: Weryfikacja opisu</h4>
+            <p>Poniżej znajduje się opis wygenerowany przez sztuczną inteligencję. Możesz go edytować według potrzeb przed finalnym zapisaniem książki.</p>
+        </div>
+
+        <form method="post" class="description-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    {{ field.label_tag }}
+                    {% if field.errors %}
+                        <ul class="errorlist">
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <span class="helptext">{{ field.help_text }}</span>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-success">✓ Zapisz książkę</button>
+                <a href="{% url 'add_book_form' %}" class="btn btn-warning">← Wróć do edycji danych</a>
+                <a href="{% url 'list_books' %}" class="btn btn-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

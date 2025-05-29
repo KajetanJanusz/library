@@ -25,7 +25,8 @@ urlpatterns = [
      path('<int:pk>/notification', views.SubscribeBookView.as_view(), name='subscribe_book'),
 
      path('dashboard/employee/<int:pk>', views.DashboardEmployeeView.as_view(), name='dashboard_employee'),
-     path('add/', views.AddBookView.as_view(), name='add_book'),
+     path('book/add/', views.AddBookFormView.as_view(), name='add_book_form'),
+     path('book/confirm-description/', views.ConfirmBookDescriptionView.as_view(), name='confirm_book_description'),
      path('<int:pk>/edit/', views.EditBookView.as_view(), name='edit_book'),
      path('<int:pk>/delete/', views.DeleteBookView.as_view(), name='delete_book'),
      path('borrows/', views.ListBorrowsView.as_view(), name='list_borrows'),

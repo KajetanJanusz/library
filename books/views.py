@@ -1,16 +1,17 @@
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
+from asgiref.sync import sync_to_async
 
 from django.contrib import messages
 from django.db.models.query import QuerySet
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, ListView, CreateView, UpdateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count, Case, When, Value, IntegerField, Sum
 from django.contrib.auth.views import (
@@ -25,7 +26,7 @@ from books import forms
 from books.mixins import AdminMixin, CustomerMixin, EmployeeMixin
 from books.models import CustomUser
 from books.helpers import get_five_book_articles
-from books.ai import get_ai_book_recommendations, get_ai_generated_description
+from books.ai import get_ai_book_recommendations, get_ai_generated_description, get_ai_generated_fun_fact
 
 class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
     """
@@ -35,7 +36,7 @@ class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
         - Wyświetla wypożyczone książki
         - Pokazuje nieprzeczytane powiadomienia
         - Prezentuje opinie użytkownika o książkach
-        - Udostępnia rekomendacje książek
+        - Udostępnia rekomendacje książek i ciekawostki
 
         Wymaga logowania i dostępu klienta.
     """
@@ -51,16 +52,22 @@ class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         user = self.get_object()
-        if 'ai_recommendations' in self.request.session:
-            ai_recommendations = self.request.session['ai_recommendations']
-        else:
-            self.request.session['ai_recommendations'] = ai_recommendations = get_ai_book_recommendations(list(BookRental.objects.filter(user=user))) 
+        if 'ai_recommendations' not in self.request.session:
+            self.request.session['ai_recommendations'] = get_ai_book_recommendations(list(BookRental.objects.filter(user=user)),
+                                                                                     list(Book.objects.all()))
+
+        if 'ai_fun_fact' not in self.request.session:
+            self.request.session['ai_fun_fact'] = get_ai_generated_fun_fact()
+            
+        ai_recommendations = self.request.session['ai_recommendations']
+        ai_fun_fact = self.request.session['ai_fun_fact']
         context.update({
             'rented_books': BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending') | Q(status='overdue'))),
             'rented_books_old': BookRental.objects.filter(user=user, status='returned'),
             'notifications': Notification.objects.filter(user=user, is_read=False, is_available=True),
             'opinions': Opinion.objects.filter(user=user),
             'ai_recommendations': ai_recommendations,
+            'ai_fun_fact': ai_fun_fact,
             'badges': Badge.objects.get(user=user),
             'avarage_user_rents': BookRental.objects.exclude(user=user).count()/(CustomUser.objects.exclude(id=self.request.user.id)).count(),
             'all_my_rents': BookRental.objects.filter(user=user).count(),
@@ -108,9 +115,16 @@ class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
 
         available_copy = BookCopy.objects.select_related('book').filter(book=book, is_available=True).first()
         user_rentals_count = BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending'))).count()
+        similar_book_in_rented = BookRental.objects.filter(user=user, 
+                                                           book_copy__book_title=book.title,
+                                                           return_date__isnull=True).exists()
 
         if not available_copy:
             messages.warning(request, "Nie ma wolnych egzemplarzy")
+            return redirect('dashboard_client', pk=request.user.id)
+        
+        if not similar_book_in_rented:
+            messages.warning(request, "Masz już wypożyczoną tą książkę")
             return redirect('dashboard_client', pk=request.user.id)
         
         if user_rentals_count >= 3:
@@ -358,37 +372,129 @@ class DashboardEmployeeView(LoginRequiredMixin, EmployeeMixin, DetailView):
         
         return context
 
-class AddBookView(LoginRequiredMixin, EmployeeMixin, CreateView):
+class AddBookFormView(LoginRequiredMixin, EmployeeMixin, FormView):
     """
-    Widok dodawania nowej książki.
-
-        Funkcje:
-        - Umożliwia wprowadzenie danych nowej książki
-        - Tworzy nowe egzemplarze książki
-
-        Wymaga logowania i dostępu pracownika.
+    Widok formularza dodawania nowej książki - pierwszy krok.
+    
+    Funkcje:
+    - Umożliwia wprowadzenie podstawowych danych książki
+    - Generuje opis AI na podstawie tytułu i autora
+    - Przekierowuje do widoku potwierdzenia z opisem
+    
+    Wymaga logowania i dostępu pracownika.
     """
-    template_name = "add_books.html"
+    template_name = "add_books_form.html"
     form_class = forms.AddBookForm
-    success_url = reverse_lazy('list_books')
+    
+    def get_initial(self):
+        initial_data = self.request.session.get('book_form_data', {})
+        
+        if 'category' in initial_data and initial_data['category']:
+            try:
+                initial_data['category'] = Category.objects.get(id=initial_data['category'])
+            except Category.DoesNotExist:
+                initial_data['category'] = None
+        
+        if 'published_date' in initial_data and initial_data['published_date']:
+            try:
+                initial_data['published_date'] = datetime.strptime(initial_data['published_date'], '%Y-%m-%d').date()
+            except ValueError:
+                initial_data['published_date'] = None
 
+        return initial_data
+    
     def form_valid(self, form):
-        book = form.save(commit=False)
-        total_copies = form.cleaned_data['total_copies']
-        title = form.cleaned_data['title']
-        author = form.cleaned_data['author']
-
+        form_data = form.cleaned_data
+        self.request.session['book_form_data'] = {
+            'title': form_data['title'],
+            'author': form_data['author'],
+            'category': form_data['category'].id if form_data['category'] else None,
+            'isbn': form_data['isbn'],
+            'published_date': str(form_data["published_date"]),
+            'total_copies': form_data['total_copies'],
+        }
+        
+        title = form_data['title']
+        author = form_data['author']
         ai_description = get_ai_generated_description(title, author)
-        book.description = ai_description
-        book.save()
+        self.request.session['ai_description'] = ai_description
+        
+        return HttpResponseRedirect(reverse('confirm_book_description'))
 
-        BookCopy.objects.bulk_create([
-            BookCopy(book=book) for _ in range(total_copies)
-        ])
 
-        messages.success(self.request, "Pomyślnie dodano książkę")
-
+class ConfirmBookDescriptionView(LoginRequiredMixin, EmployeeMixin, FormView):
+    """
+    Widok potwierdzania/edycji opisu książki - drugi krok.
+    
+    Funkcje:
+    - Wyświetla wygenerowany opis AI
+    - Umożliwia edycję opisu
+    - Tworzy książkę i egzemplarze po zatwierdzeniu
+    
+    Wymaga logowania i dostępu pracownika.
+    """
+    template_name = "confirm_book_description.html"
+    form_class = forms.ConfirmDescriptionForm
+    success_url = reverse_lazy('list_books')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if 'book_form_data' not in request.session:
+            messages.error(request, "Brak danych książki. Rozpocznij od początku.")
+            return HttpResponseRedirect(reverse('add_book_form'))
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['book_data'] = self.request.session.get('book_form_data', {})
+        return context
+    
+    def get_initial(self):
+        return {
+            'description': self.request.session.get('ai_description', '')
+        }
+    
+    def form_valid(self, form):
+        try:
+            book_data = self.request.session['book_form_data']
+            description = form.cleaned_data['description']
+            
+            category = None
+            if book_data['category']:
+                category = Category.objects.get(id=book_data['category'])
+            
+            book = Book.objects.create(
+                title=book_data['title'],
+                author=book_data['author'],
+                category=category,
+                isbn=book_data['isbn'],
+                published_date=book_data["published_date"],
+                total_copies = book_data['total_copies'],
+                description=description
+            )
+            
+            total_copies = book_data['total_copies']
+            BookCopy.objects.bulk_create([
+                BookCopy(book=book) for _ in range(total_copies)
+            ])
+            
+            self.request.session.pop('book_form_data', None)
+            self.request.session.pop('ai_description', None)
+            
+            messages.success(self.request, f"Pomyślnie dodano książkę '{book.title}' z {total_copies} egzemplarzami")
+            
+        except Exception as e:
+            messages.error(self.request, f"Wystąpił błąd podczas dodawania książki: {str(e)}")
+            return self.form_invalid(form)
+        
         return super().form_valid(form)
+    
+    def get(self, request, *args, **kwargs):
+        if 'ai_description' not in request.session and 'book_form_data' in request.session:
+            book_data = request.session['book_form_data']
+            ai_description = get_ai_generated_description(book_data['title'], book_data['author'])
+            request.session['ai_description'] = ai_description
+        
+        return super().get(request, *args, **kwargs)
 
 
 class EditBookView(LoginRequiredMixin, EmployeeMixin, UpdateView):

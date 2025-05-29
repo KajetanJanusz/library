@@ -8,15 +8,16 @@ genai_text.configure(api_key="AIzaSyDbJ3KSu9oQo8KrkwP0wyNJSZv2iMiKxXg")
 model = genai_text.GenerativeModel("gemini-1.5-flash")
 
 
-def get_ai_book_recommendations(book_list):
-    if len(book_list) < 3:
+def get_ai_book_recommendations(rentals, available_books):
+    if len(rentals) < 3:
         return ["Musisz przeczytać więcej niż 3 książki, aby otrzymać rekomendacje AI."]
     
     prompt = (
         "Mam bibliotekę z następującymi książkami: \n"
-        + "\n".join(f"- {book}" for book in book_list)
+        + "\n".join(f"- {rental.book_copy.book.title}" for rental in rentals)
         + "\nNa podstawie tych książek zaproponuj mi 3 inne tytuły, które mogłyby mnie zainteresować.\n"
-        + "Odpowiedz daj w takiej formie 1. *Tytuł* - *powód* itd., pisz do mnie w pierwszej osobie po imieniu"
+        + "Odpowiedz daj w takiej formie 1. *Tytuł* - *powód* itd., pisz do mnie w pierwszej osobie po imieniu."
+        + "Wybierz z tej listy " + "\n".join(f"- {book.title}" for book in available_books)
     )
 
     try:
@@ -33,8 +34,9 @@ def get_ai_book_recommendations(book_list):
     except Exception as e:
         return ["Rekomendacje AI są w tym momencie niedostępne, z powodów połączenia z serwerem", "Spróbuj ponownie później.", "Przepraszamy!"]
 
-def get_ai_generated_description(title, author):
-    prompt = f"Wygeneruj krótki 3 zdaniowy opis książki {title} autora {author}"
+
+def get_ai_generated_fun_fact():
+    prompt = f"Wygeneruj krótką ciekawostkę po polsku ze świata książek, musi być ona sprawdzona i prawdziwa."
 
     try:
         response = model.generate_content(prompt)
@@ -42,19 +44,12 @@ def get_ai_generated_description(title, author):
     except Exception as e:
         return f"Wystąpił błąd podczas komunikacji z Gemini: {e}"
 
-def generate_and_save_image(title, author):
-    prompt = f"cover-of-{title.replace(" ", "-")}-by-{author.replace(" ", "-")}"
-    url = "https://image.pollinations.ai/prompt/" + prompt
+
+def get_ai_generated_description(title, author):
+    prompt = f"Wygeneruj po polsku krótki 3 zdaniowy opis książki {title} autora {author}"
 
     try:
-        response = requests.get(url, stream=True)
-        response.raise_for_status()
-
-        file_name = f"{title.replace(' ', '_')}_cover.jpg"
-        image_content = ContentFile(response.content)
-
-        return file_name, image_content
-    except requests.RequestException as e:
-        print(f"Error generating image for book {title}: {e}")
-        return None
-    
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Wystąpił błąd podczas komunikacji z Gemini: {e}"

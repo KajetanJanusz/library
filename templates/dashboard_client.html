@@ -343,14 +343,21 @@
         </div>
         {% endif %}
 
+        {% if ai_fun_fact %}
+        <div class="dashboard-section">
+            <h2>Ciekawostka AI</h2>
+            <ul class="dashboard-list rental-history-list collapsed">
+                <ul class="dashboard-list">
+                    <li>{{ ai_fun_fact }}</li>
+                </ul>
+            </ul>
+        </div>
+        {% endif %}
+
         <div class="dashboard-section">
             <h2>Statystyki</h2>
             <div class="chart-card">
-                <h3>Porównanie wypożyczeń</h3>
-                <canvas id="rentalsChart"></canvas>
-            </div>
-            <div class="chart-card">
-                <h3>Książki według kategorii</h3>
+                <h3>Twoje książki według kategorii</h3>
                 <canvas id="categoriesChart"></canvas>
             </div>
         </div>
@@ -409,25 +416,6 @@ document.addEventListener('DOMContentLoaded', function() {
     addExpandButton('.rental-history-list', 'Pokaż pełną historię wypożyczeń');
     addExpandButton('.notifications-list', 'Pokaż wszystkie powiadomienia');
 });
-    new Chart(document.getElementById('rentalsChart'), {
-        type: 'bar',
-        data: {
-            labels: ['Twoje wypożyczenia', 'Średnia użytkowników'],
-            datasets: [{
-                label: 'Liczba wypożyczeń',
-                data: [{{ all_my_rents }}, {{ avarage_user_rents }}],
-                backgroundColor: ['#3498db', '#2ecc71']
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
 
     new Chart(document.getElementById('categoriesChart'), {
         type: 'pie',

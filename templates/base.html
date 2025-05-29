@@ -133,7 +133,7 @@
             {% elif request.user.is_authenticated and request.user.is_employee %}
                 <li><a href="{% url 'list_books' %}">Książki</a></li>
                 <li><a href="{% url 'dashboard_employee' user.id %}">Dashboard pracownika</a></li>
-                <li><a href="{% url 'add_book' %}">Dodaj książkę</a></li>
+                <li><a href="{% url 'add_book_form' %}">Dodaj książkę</a></li>
                 <li><a href="{% url 'list_borrows' %}">Wypożyczenia</a></li>
                 <li><a href="{% url 'list_users' %}">Użytkownicy</a></li>
                 <li><a href="{% url 'logout' %}">Wyloguj</a></li>
