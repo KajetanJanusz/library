@@ -1,7 +1,4 @@
-import requests
 import google.generativeai as genai_text
-import requests
-from django.core.files.base import ContentFile
 import re
 
 genai_text.configure(api_key="AIzaSyDbJ3KSu9oQo8KrkwP0wyNJSZv2iMiKxXg")
@@ -31,12 +28,12 @@ def get_ai_book_recommendations(rentals, available_books):
             propozycja_3 = f"{match.group(6).strip("*")} - {match.group(7).strip().replace("*", "")}"
 
         return [propozycja_1, propozycja_2, propozycja_3]
-    except Exception as e:
+    except Exception:
         return ["Rekomendacje AI są w tym momencie niedostępne, z powodów połączenia z serwerem", "Spróbuj ponownie później.", "Przepraszamy!"]
 
 
 def get_ai_generated_fun_fact():
-    prompt = f"Wygeneruj krótką ciekawostkę po polsku ze świata książek, musi być ona sprawdzona i prawdziwa."
+    prompt = "Wygeneruj krótką ciekawostkę po polsku ze świata książek, musi być ona sprawdzona i prawdziwa."
 
     try:
         response = model.generate_content(prompt)

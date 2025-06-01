@@ -191,13 +191,6 @@
         <div class="book-main-details">
             <div class="book-image-container">
                 <h1>{{ book.title }}</h1>
-                {% if book.ai_image %}
-                    <img src="{{ book.ai_image.url }}" alt="Okładka książki {{ book.title }}" class="book-cover-image">
-                {% else %}
-                    <div class="no-image-placeholder">
-                        Brak dostępnego obrazu okładki
-                    </div>
-                {% endif %}
             </div>
             <div class="book-details-grid">
                 <p><strong>Autor:</strong> {{ book.author }}</p>

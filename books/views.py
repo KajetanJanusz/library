@@ -1,9 +1,8 @@
 from datetime import date, datetime, timedelta
 from typing import Any
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth import login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
-from asgiref.sync import sync_to_async
 
 from django.contrib import messages
 from django.db.models.query import QuerySet

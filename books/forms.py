@@ -1,18 +1,15 @@
-from typing import Any
 from django import forms
-from django.forms import Form, ModelForm
-from django.shortcuts import redirect
-from django import forms
+from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
 
-from books.models import Book, BookCopy, BookRental, Opinion
+from books.models import Book, Opinion
 from books.models import CustomUser
 
 class AddBookForm(ModelForm):
     class Meta:
         model = Book
-        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies', 'ai_image']
+        fields = ['title', 'author', 'category', 'published_date', 'isbn', 'total_copies']
         labels = {
             'title': 'Tytuł',
             'author': 'Autor',
