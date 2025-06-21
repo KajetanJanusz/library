@@ -1,5 +1,8 @@
+from django.core.files.base import ContentFile
 import google.generativeai as genai_text
 import re
+
+import requests
 
 genai_text.configure(api_key="AIzaSyDbJ3KSu9oQo8KrkwP0wyNJSZv2iMiKxXg")
 model = genai_text.GenerativeModel("gemini-1.5-flash")
@@ -30,6 +33,23 @@ def get_ai_book_recommendations(rentals, available_books):
         return [propozycja_1, propozycja_2, propozycja_3]
     except Exception:
         return ["Rekomendacje AI są w tym momencie niedostępne, z powodów połączenia z serwerem", "Spróbuj ponownie później.", "Przepraszamy!"]
+    
+
+def generate_and_save_image(title, author):
+    prompt = f"cover-of-{title.replace(" ", "-")}-by-{author.replace(" ", "-")}"
+    url = "https://image.pollinations.ai/prompt/" + prompt
+
+    try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+
+        file_name = f"{title.replace(' ', '_')}_cover.jpg"
+        image_content = ContentFile(response.content)
+
+        return file_name, image_content
+    except requests.RequestException as e:
+        print(f"Error generating image for book {title}: {e}")
+        return None
 
 
 def get_ai_generated_fun_fact():
