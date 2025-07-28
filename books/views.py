@@ -115,7 +115,7 @@ class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
         available_copy = BookCopy.objects.select_related('book').filter(book=book, is_available=True).first()
         user_rentals_count = BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending'))).count()
         similar_book_in_rented = BookRental.objects.filter(user=user, 
-                                                           book_copy__book_title=book.title,
+                                                           book_copy__book__title=book.title,
                                                            return_date__isnull=True).exists()
 
         if not available_copy:
