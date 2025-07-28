@@ -115,14 +115,14 @@ class BorrowBook(LoginRequiredMixin, CustomerMixin, View):
         available_copy = BookCopy.objects.select_related('book').filter(book=book, is_available=True).first()
         user_rentals_count = BookRental.objects.filter(Q(user=user.id) & (Q(status='rented') | Q(status='pending'))).count()
         similar_book_in_rented = BookRental.objects.filter(user=user, 
-                                                           book_copy__book__title=book.title,
+                                                           book_copy__book=book,
                                                            return_date__isnull=True).exists()
 
         if not available_copy:
             messages.warning(request, "Nie ma wolnych egzemplarzy")
             return redirect('dashboard_client', pk=request.user.id)
         
-        if not similar_book_in_rented:
+        if similar_book_in_rented:
             messages.warning(request, "Masz już wypożyczoną tą książkę")
             return redirect('dashboard_client', pk=request.user.id)
         
