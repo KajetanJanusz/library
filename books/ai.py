@@ -4,8 +4,8 @@ import re
 
 import requests
 
-genai_text.configure(api_key="AIzaSyDbJ3KSu9oQo8KrkwP0wyNJSZv2iMiKxXg")
-model = genai_text.GenerativeModel("gemini-1.5-flash")
+genai_text.configure(api_key="AIzaSyApG3nbYNYylJ8kcOn01cfMHBBH90Dp0Gg")
+model = genai_text.GenerativeModel("gemini-2.5-flash")
 
 
 def get_ai_book_recommendations(rentals, available_books):
@@ -53,7 +53,7 @@ def generate_and_save_image(title, author):
 
 
 def get_ai_generated_fun_fact():
-    prompt = "Wygeneruj krótką ciekawostkę po polsku ze świata książek, musi być ona sprawdzona i prawdziwa."
+    prompt = "Wygeneruj krótką ciekawostkę po polsku ze świata książek, musi być ona sprawdzona i prawdziwa. Nie dawaj zadnych znaków formatujących tekst."
 
     try:
         response = model.generate_content(prompt)
