@@ -4,8 +4,8 @@ import re
 
 import requests
 
-genai_text.configure(api_key="AIzaSyApG3nbYNYylJ8kcOn01cfMHBBH90Dp0Gg")
-model = genai_text.GenerativeModel("gemini-2.5-flash")
+genai_text.configure(api_key="AIzaSyBTwsUMr_ZCnVQjSW0IMeZ9yPohK7W8qoE")
+model = genai_text.GenerativeModel("gemini-2.0-flash-lite")
 
 
 def get_ai_book_recommendations(rentals, available_books):
@@ -22,13 +22,15 @@ def get_ai_book_recommendations(rentals, available_books):
 
     try:
         response = model.generate_content(prompt)
-        pattern = pattern = r"^(.*?)\s1\.\s\*(.*?)\*\s-\s(.*?)\s2\.\s\*(.*?)\*\s-\s(.*?)\s3\.\s\*(.*?)\*\s-\s(.*)$"
+        pattern = r"^(.*?)\s1\.\s\*(.*?)\*\s-\s(.*?)\s2\.\s\*(.*?)\*\s-\s(.*?)\s3\.\s\*(.*?)\*\s-\s(.*)$"
         match = re.match(pattern, response.text, re.DOTALL)
 
-        if match:
-            propozycja_1 = f"{match.group(2).strip("*")} - {match.group(3).strip().replace("*", "")}"
-            propozycja_2 = f"{match.group(4).strip("*")} - {match.group(5).strip().replace("*", "")}"
-            propozycja_3 = f"{match.group(6).strip("*")} - {match.group(7).strip().replace("*", "")}"
+        if not match:
+            raise Exception
+
+        propozycja_1 = f"{match.group(2).strip('*')} - {match.group(3).strip().replace('*', '')}"
+        propozycja_2 = f"{match.group(4).strip('*')} - {match.group(5).strip().replace('*', '')}"
+        propozycja_3 = f"{match.group(6).strip('*')} - {match.group(7).strip().replace('*', '')}"
 
         return [propozycja_1, propozycja_2, propozycja_3]
     except Exception:
@@ -36,7 +38,7 @@ def get_ai_book_recommendations(rentals, available_books):
     
 
 def generate_and_save_image(title, author):
-    prompt = f"cover-of-{title.replace(" ", "-")}-by-{author.replace(" ", "-")}"
+    prompt = f"cover-of-{title.replace(' ', '-')}-by-{author.replace(' ', '-')}"
     url = "https://image.pollinations.ai/prompt/" + prompt
 
     try:

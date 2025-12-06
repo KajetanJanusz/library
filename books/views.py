@@ -68,7 +68,7 @@ class DashboardClient(LoginRequiredMixin, CustomerMixin, DetailView):
             'ai_recommendations': ai_recommendations,
             'ai_fun_fact': ai_fun_fact,
             'badges': Badge.objects.get(user=user),
-            'avarage_user_rents': BookRental.objects.exclude(user=user).count()/(CustomUser.objects.exclude(id=self.request.user.id)).count(),
+            'avarage_user_rents': BookRental.objects.exclude(user=user).count()/((CustomUser.objects.exclude(id=self.request.user.id)).count() or 1),
             'all_my_rents': BookRental.objects.filter(user=user).count(),
             'books_in_categories': BookRental.objects\
                                     .filter(user=user)\
@@ -181,6 +181,9 @@ class ReturnBook(LoginRequiredMixin, CustomerMixin, View):
 
     def post(self, request, *args, **kwargs):
         rental = get_object_or_404(BookRental, id=self.kwargs['pk'])
+        if rental.user != request.user:
+            messages.warning(request, "Nie możesz zwrócić tej książki")
+            return redirect('dashboard_client', pk=request.user.id)
         
         rental.status = 'pending'
         rental.save()
@@ -205,7 +208,11 @@ class ExtendRentalPeriodView(LoginRequiredMixin, CustomerMixin, View):
 
     def post(self, request, *args, **kwargs):
         rental = get_object_or_404(BookRental, id=self.kwargs['pk'])
-        
+
+        if rental.user != request.user:
+            messages.warning(request, "Nie możesz zwrócić tej książki")
+            return redirect('dashboard_client', pk=request.user.id)
+
         if not rental.is_extended:
             rental.due_date += timedelta(days=7)
             rental.is_extended = True
@@ -645,6 +652,9 @@ class ListUsersView(LoginRequiredMixin, EmployeeMixin, ListView):
     """
     model = CustomUser
     template_name = "list_users.html"
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(is_employee=False)
 
 
 class DetailUserView(LoginRequiredMixin, EmployeeMixin, DetailView):

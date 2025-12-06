@@ -44,6 +44,14 @@ class CustomUser(AbstractUser):
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+
+        super().save(*args, **kwargs)
+
+        if is_new:
+            Badge.objects.create(user=self)
+
     def __str__(self):
         return self.username
     
@@ -90,7 +98,7 @@ class BookRental(models.Model):
         if not self.due_date:
             self.due_date = self.rental_date + timedelta(days=30)
 
-        return super(BookRental, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
     
 class Opinion(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="rate")
