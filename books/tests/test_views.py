@@ -768,6 +768,11 @@ class TestAddBookFormView:
 
 @pytest.mark.django_db
 class TestConfirmBookDescriptionView:
+    @pytest.fixture(autouse=True)
+    def mock_generate_image(self):
+        with patch('books.models.generate_and_save_image', return_value=None):
+            yield
+
     def test_redirects_when_no_session_data(self, client, employee_user):
         # Arrange
         client.force_login(employee_user)
