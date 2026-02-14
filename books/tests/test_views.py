@@ -685,13 +685,521 @@ class TestDashboardEmployeeView:
         assert most_rented[0]['book_copy__book__title'] == 'Popularna książka'
         assert most_rented[0]['rental_count'] == 5
 
-    def test_total_rentals_count(self, client, employee_user, book_rental_factory):
+    def test_total_rentals_count(self, client, employee_user, book_rental_factory, book_copy_factory):
         # Arrange
         client.force_login(employee_user)
-        book_rental_factory.create_batch(7)
+        book_copy = book_copy_factory()
+        book_rental_factory.create_batch(7, book_copy=book_copy)
 
         # Act
         response = client.get(reverse('dashboard_employee', kwargs={'pk': employee_user.pk}))
 
         # Assert
         assert response.context['total_rentals'] == 7
+
+
+@pytest.mark.django_db
+class TestAddBookFormView:
+    @pytest.fixture(autouse=True)
+    def mock_ai_description(self):
+        with patch('books.views.get_ai_generated_description', return_value='Opis wygenerowany przez AI') as mock:
+            yield mock
+
+    def test_employee_can_access_form(self, client, employee_user):
+        # Arrange
+        client.force_login(employee_user)
+
+        # Act
+        response = client.get(reverse('add_book_form'))
+
+        # Assert
+        assert response.status_code == 200
+
+    def test_regular_user_cannot_access_form(self, client, user):
+        # Arrange
+        client.force_login(user)
+
+        # Act
+        response = client.get(reverse('add_book_form'))
+
+        # Assert
+        assert response.status_code == 302
+
+    def test_form_valid_saves_data_to_session(self, client, employee_user, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+
+        # Act
+        response = client.post(reverse('add_book_form'), {
+            'title': 'Testowa książka',
+            'author': 'Jan Kowalski',
+            'category': category.pk,
+            'isbn': '1234567890123',
+            'published_date': '2020-01-01',
+            'total_copies': 5,
+        })
+
+        # Assert
+        session = client.session
+        assert session['book_form_data']['title'] == 'Testowa książka'
+        assert session['book_form_data']['author'] == 'Jan Kowalski'
+        assert session['ai_description'] == 'Opis wygenerowany przez AI'
+
+    def test_form_valid_redirects_to_confirm(self, client, employee_user, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+
+        # Act
+        response = client.post(reverse('add_book_form'), {
+            'title': 'Testowa książka',
+            'author': 'Jan Kowalski',
+            'category': category.pk,
+            'isbn': '1234567890123',
+            'published_date': '2020-01-01',
+            'total_copies': 5,
+        })
+
+        # Assert
+        assert response.status_code == 302
+        assert 'confirm-description' in response.url
+
+
+@pytest.mark.django_db
+class TestConfirmBookDescriptionView:
+    def test_redirects_when_no_session_data(self, client, employee_user):
+        # Arrange
+        client.force_login(employee_user)
+
+        # Act
+        response = client.get(reverse('confirm_book_description'))
+
+        # Assert
+        assert response.status_code == 302
+        assert 'book/add' in response.url
+
+    def test_displays_book_data_from_session(self, client, employee_user, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        session = client.session
+        session['book_form_data'] = {
+            'title': 'Testowa książka',
+            'author': 'Jan Kowalski',
+            'category': category.pk,
+            'isbn': '1234567890123',
+            'published_date': '2020-01-01',
+            'total_copies': 5,
+        }
+        session['ai_description'] = 'Opis AI'
+        session.save()
+
+        # Act
+        response = client.get(reverse('confirm_book_description'))
+
+        # Assert
+        assert response.status_code == 200
+        assert response.context['book_data']['title'] == 'Testowa książka'
+
+    def test_form_valid_creates_book(self, client, employee_user, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        session = client.session
+        session['book_form_data'] = {
+            'title': 'Nowa książka',
+            'author': 'Adam Nowak',
+            'category': category.pk,
+            'isbn': '9876543210123',
+            'published_date': '2021-05-15',
+            'total_copies': 3,
+        }
+        session['ai_description'] = 'Opis AI'
+        session.save()
+
+        # Act
+        from books.models import Book
+        initial_count = Book.objects.count()
+        client.post(reverse('confirm_book_description'), {'description': 'Finalny opis książki'})
+
+        # Assert
+        assert Book.objects.count() == initial_count + 1
+        book = Book.objects.get(title='Nowa książka')
+        assert book.description == 'Finalny opis książki'
+
+    def test_form_valid_creates_copies(self, client, employee_user, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        session = client.session
+        session['book_form_data'] = {
+            'title': 'Książka z kopiami',
+            'author': 'Autor',
+            'category': category.pk,
+            'isbn': '1111111111111',
+            'published_date': '2022-01-01',
+            'total_copies': 4,
+        }
+        session['ai_description'] = 'Opis'
+        session.save()
+
+        # Act
+        from books.models import Book, BookCopy
+        client.post(reverse('confirm_book_description'), {'description': 'Opis'})
+
+        # Assert
+        book = Book.objects.get(title='Książka z kopiami')
+        assert BookCopy.objects.filter(book=book).count() == 4
+
+    def test_form_valid_clears_session(self, client, employee_user, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        session = client.session
+        session['book_form_data'] = {
+            'title': 'Książka',
+            'author': 'Autor',
+            'category': category.pk,
+            'isbn': '2222222222222',
+            'published_date': '2022-01-01',
+            'total_copies': 1,
+        }
+        session['ai_description'] = 'Opis'
+        session.save()
+
+        # Act
+        client.post(reverse('confirm_book_description'), {'description': 'Opis'})
+
+        # Assert
+        session = client.session
+        assert 'book_form_data' not in session
+        assert 'ai_description' not in session
+
+
+@pytest.mark.django_db
+class TestEditBookView:
+    def test_employee_can_access_edit_form(self, client, employee_user, book_factory):
+        # Arrange
+        client.force_login(employee_user)
+        book = book_factory()
+
+        # Act
+        response = client.get(reverse('edit_book', kwargs={'pk': book.pk}))
+
+        # Assert
+        assert response.status_code == 200
+
+    def test_regular_user_cannot_access_edit_form(self, client, user, book_factory):
+        # Arrange
+        client.force_login(user)
+        book = book_factory()
+
+        # Act
+        response = client.get(reverse('edit_book', kwargs={'pk': book.pk}))
+
+        # Assert
+        assert response.status_code == 302
+
+    def test_edit_book_updates_title(self, client, employee_user, book_factory, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        book = book_factory(title='Stary tytuł', category=category, total_copies=2)
+
+        # Act
+        client.post(reverse('edit_book', kwargs={'pk': book.pk}), {
+            'title': 'Nowy tytuł',
+            'author': book.author,
+            'category': category.pk,
+            'isbn': book.isbn,
+            'published_date': book.published_date,
+            'total_copies': 2,
+            'description': book.description,
+        })
+
+        # Assert
+        book.refresh_from_db()
+        assert book.title == 'Nowy tytuł'
+
+    def test_edit_book_adds_copies(self, client, employee_user, book_factory, book_copy_factory, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        book = book_factory(category=category, total_copies=2)
+        book_copy_factory(book=book)
+        book_copy_factory(book=book)
+
+        # Act
+        from books.models import BookCopy
+        initial_count = BookCopy.objects.filter(book=book).count()
+        client.post(reverse('edit_book', kwargs={'pk': book.pk}), {
+            'title': book.title,
+            'author': book.author,
+            'category': category.pk,
+            'isbn': book.isbn,
+            'published_date': book.published_date,
+            'total_copies': 5,
+            'description': book.description,
+        })
+
+        # Assert
+        assert BookCopy.objects.filter(book=book).count() == initial_count + 3
+
+    def test_edit_book_removes_available_copies(self, client, employee_user, book_factory, book_copy_factory, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        book = book_factory(category=category, total_copies=4)
+        book_copy_factory(book=book, is_available=True)
+        book_copy_factory(book=book, is_available=True)
+        book_copy_factory(book=book, is_available=True)
+        book_copy_factory(book=book, is_available=True)
+
+        # Act
+        from books.models import BookCopy
+        client.post(reverse('edit_book', kwargs={'pk': book.pk}), {
+            'title': book.title,
+            'author': book.author,
+            'category': category.pk,
+            'isbn': book.isbn,
+            'published_date': book.published_date,
+            'total_copies': 2,
+            'description': book.description,
+        })
+
+        # Assert
+        assert BookCopy.objects.filter(book=book).count() == 2
+
+    def test_edit_book_cannot_remove_borrowed_copies(self, client, employee_user, book_factory, book_copy_factory, category_factory):
+        # Arrange
+        client.force_login(employee_user)
+        category = category_factory()
+        book = book_factory(category=category, total_copies=3)
+        book_copy_factory(book=book, is_available=True)
+        book_copy_factory(book=book, is_available=False)
+        book_copy_factory(book=book, is_available=False)
+
+        # Act
+        from books.models import BookCopy
+        response = client.post(reverse('edit_book', kwargs={'pk': book.pk}), {
+            'title': book.title,
+            'author': book.author,
+            'category': category.pk,
+            'isbn': book.isbn,
+            'published_date': book.published_date,
+            'total_copies': 1,
+            'description': book.description,
+        })
+
+        # Assert
+        assert BookCopy.objects.filter(book=book).count() == 3
+
+
+@pytest.mark.django_db
+class TestDeleteBookView:
+    def test_employee_can_access_delete_page(self, client, employee_user, book_factory):
+        # Arrange
+        client.force_login(employee_user)
+        book = book_factory()
+
+        # Act
+        response = client.get(reverse('delete_book', kwargs={'pk': book.pk}))
+
+        # Assert
+        assert response.status_code == 200
+
+    def test_regular_user_cannot_access_delete_page(self, client, user, book_factory):
+        # Arrange
+        client.force_login(user)
+        book = book_factory()
+
+        # Act
+        response = client.get(reverse('delete_book', kwargs={'pk': book.pk}))
+
+        # Assert
+        assert response.status_code == 302
+
+    def test_delete_book_removes_book(self, client, employee_user, book_factory):
+        # Arrange
+        client.force_login(employee_user)
+        book = book_factory()
+        book_pk = book.pk
+
+        # Act
+        from books.models import Book
+        client.post(reverse('delete_book', kwargs={'pk': book.pk}))
+
+        # Assert
+        assert not Book.objects.filter(pk=book_pk).exists()
+
+    def test_delete_book_redirects(self, client, employee_user, book_factory):
+        # Arrange
+        client.force_login(employee_user)
+        book = book_factory()
+
+        # Act
+        response = client.post(reverse('delete_book', kwargs={'pk': book.pk}))
+
+        # Assert
+        assert response.status_code == 302
+
+
+@pytest.mark.django_db
+class TestApproveReturnView:
+    def test_approve_return_changes_status(self, client, employee_user, book_rental_factory):
+        # Arrange
+        client.force_login(employee_user)
+        rental = book_rental_factory(pending=True)
+
+        # Act
+        client.post(reverse('approve_return', kwargs={'pk': rental.pk}))
+
+        # Assert
+        rental.refresh_from_db()
+        assert rental.status == 'returned'
+        assert rental.return_date is not None
+
+    def test_approve_return_makes_copy_available(self, client, employee_user, book_rental_factory):
+        # Arrange
+        client.force_login(employee_user)
+        rental = book_rental_factory(pending=True)
+        book_copy = rental.book_copy
+
+        # Act
+        client.post(reverse('approve_return', kwargs={'pk': rental.pk}))
+
+        # Assert
+        book_copy.refresh_from_db()
+        assert book_copy.is_available is True
+        assert book_copy.borrower is None
+
+    def test_approve_return_creates_notification_for_user(self, client, employee_user, book_rental_factory):
+        # Arrange
+        client.force_login(employee_user)
+        rental = book_rental_factory(pending=True)
+        rental_user = rental.user
+        book = rental.book_copy.book
+
+        # Act
+        from books.models import Notification
+        client.post(reverse('approve_return', kwargs={'pk': rental.pk}))
+
+        # Assert
+        assert Notification.objects.filter(user=rental_user, book=book, is_available=True).exists()
+
+    def test_approve_return_updates_waiting_notifications(self, client, employee_user, book_rental_factory, notification_factory, custom_user_factory):
+        # Arrange
+        client.force_login(employee_user)
+        rental = book_rental_factory(pending=True)
+        book = rental.book_copy.book
+        waiting_user = custom_user_factory(user=True)
+        notification = notification_factory(user=waiting_user, book=book, is_available=False)
+
+        # Act
+        client.post(reverse('approve_return', kwargs={'pk': rental.pk}))
+
+        # Assert
+        notification.refresh_from_db()
+        assert notification.is_available is True
+
+    def test_regular_user_cannot_approve_return(self, client, user, book_rental_factory):
+        # Arrange
+        client.force_login(user)
+        rental = book_rental_factory(pending=True)
+
+        # Act
+        response = client.post(reverse('approve_return', kwargs={'pk': rental.pk}))
+
+        # Assert
+        assert response.status_code == 302
+        rental.refresh_from_db()
+        assert rental.status == 'pending'
+
+
+@pytest.mark.django_db
+class TestListBorrowsView:
+    def test_employee_can_access_list(self, client, employee_user):
+        # Arrange
+        client.force_login(employee_user)
+
+        # Act
+        response = client.get(reverse('list_borrows'))
+
+        # Assert
+        assert response.status_code == 200
+
+    def test_regular_user_cannot_access_list(self, client, user):
+        # Arrange
+        client.force_login(user)
+
+        # Act
+        response = client.get(reverse('list_borrows'))
+
+        # Assert
+        assert response.status_code == 302
+
+    def test_list_contains_rentals(self, client, employee_user, book_rental_factory):
+        # Arrange
+        client.force_login(employee_user)
+        rental = book_rental_factory(rented=True)
+
+        # Act
+        response = client.get(reverse('list_borrows'))
+
+        # Assert
+        assert rental in response.context['object_list']
+
+    def test_rentals_sorted_by_status_priority(self, client, employee_user, book_rental_factory):
+        # Arrange
+        client.force_login(employee_user)
+        returned = book_rental_factory(returned=True)
+        overdue = book_rental_factory(overdue=True)
+        rented = book_rental_factory(rented=True)
+
+        # Act
+        response = client.get(reverse('list_borrows'))
+
+        # Assert
+        rentals = list(response.context['object_list'])
+        rented_index = rentals.index(rented)
+        overdue_index = rentals.index(overdue)
+        returned_index = rentals.index(returned)
+        assert rented_index < overdue_index < returned_index
+
+
+@pytest.mark.django_db
+class TestListUsersView:
+    def test_employee_can_access_list(self, client, employee_user):
+        # Arrange
+        client.force_login(employee_user)
+
+        # Act
+        response = client.get(reverse('list_users'))
+
+        # Assert
+        assert response.status_code == 200
+
+    def test_regular_user_cannot_access_list(self, client, user):
+        # Arrange
+        client.force_login(user)
+
+        # Act
+        response = client.get(reverse('list_users'))
+
+        # Assert
+        assert response.status_code == 302
+
+    def test_list_contains_only_customers(self, client, employee_user, custom_user_factory):
+        # Arrange
+        client.force_login(employee_user)
+        customer = custom_user_factory(user=True)
+        employee = custom_user_factory(employee=True)
+
+        # Act
+        response = client.get(reverse('list_users'))
+
+        # Assert
+        users = response.context['object_list']
+        assert customer in users
+        assert employee not in users
